@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import { annee, mois } from "../data/constantes";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -8,9 +8,19 @@ import Paper from "@material-ui/core/Paper";
 import moment from "moment";
 import TableCell from "../styles/styleTableCell";
 import "moment/min/locales.min";
+import estFerie from "./jourFeries";
 
 export default function Calendier() {
   const lignes = [];
+
+  function keygen() {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  function isOdd(x) {
+    return x & 1;
+  }
+
   function colonnes(index) {
     const result = [];
 
@@ -21,17 +31,29 @@ export default function Calendier() {
       );
       myDate.locale("fr-FR");
       result.push(
-        <>
-          <TableCell>{myDate.isValid() && myDate.format("DD dd")}</TableCell>
-          <TableCell>Description</TableCell>
-        </>
+        <React.Fragment key={keygen()}>
+          <TableCell className="jour">
+            {myDate.isValid() && myDate.format("DD dd")}
+          </TableCell>
+          <TableCell
+            className={
+              myDate.day() === 0
+                ? "jour"
+                : isOdd(myDate.day())
+                ? "descriptionImpaire"
+                : "descriptionPaire"
+            }
+          >
+            {estFerie(myDate) && "Férie"}
+          </TableCell>
+        </React.Fragment>
       );
     }
     return result;
   }
 
   for (let i = 0; i < 31; i++) {
-    lignes.push(<TableRow>{colonnes(i)}</TableRow>);
+    lignes.push(<TableRow key={keygen()}>{colonnes(i)}</TableRow>);
   }
 
   return (
@@ -48,18 +70,20 @@ export default function Calendier() {
               </TableCell>
             </TableRow>
             <TableRow>
-              {mois.map(item => (
-                <TableCell className="mois" colSpan={2}>
-                  {item.label}
-                </TableCell>
+              {mois.map((item, index) => (
+                <React.Fragment key={keygen()}>
+                  <TableCell className="mois" colSpan={2}>
+                    {item.label}
+                  </TableCell>
+                </React.Fragment>
               ))}
             </TableRow>
             <TableRow>
               {mois.map(() => (
-                <>
-                  <TableCell className="jour">Jour</TableCell>
-                  <TableCell className="jour">Description</TableCell>
-                </>
+                <React.Fragment key={keygen()}>
+                  <TableCell className="entete">Jour</TableCell>
+                  <TableCell className="entete">Occupation</TableCell>
+                </React.Fragment>
               ))}
             </TableRow>
             {lignes}

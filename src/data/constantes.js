@@ -12,4 +12,6 @@ export const mois = [
   { label: "Juillet" }
 ];
 
+export const jourferies = [];
+
 export const annee = 2020;
