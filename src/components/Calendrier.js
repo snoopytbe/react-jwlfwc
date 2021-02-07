@@ -1,5 +1,5 @@
 import React from "react";
-import { annee, mois } from "../data/constantes";
+import { annee, mois, zone } from "../data/constantes";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -9,6 +9,7 @@ import moment from "moment";
 import TableCell from "../styles/styleTableCell";
 import "moment/min/locales.min";
 import estFerie from "./jourFeries";
+import estVacances from "./vacances";
 
 export default function Calendier() {
   const lignes = [];
@@ -32,19 +33,29 @@ export default function Calendier() {
       myDate.locale("fr-FR");
       result.push(
         <React.Fragment key={keygen()}>
-          <TableCell className="jour">
+          <TableCell
+            className={
+              myDate.isValid()
+                ? estFerie(myDate)
+                  ? "ferie"
+                  : "jour"
+                : "noDate"
+            }
+          >
             {myDate.isValid() && myDate.format("DD dd")}
           </TableCell>
           <TableCell
             className={
-              myDate.day() === 0
-                ? "jour"
-                : isOdd(myDate.day())
-                ? "descriptionImpaire"
-                : "descriptionPaire"
+              myDate.isValid()
+                ? myDate.day() === 0
+                  ? "jour"
+                  : isOdd(myDate.day())
+                  ? "descriptionImpaire"
+                  : "descriptionPaire"
+                : "white"
             }
           >
-            {estFerie(myDate) && "Férie"}
+            {estVacances(myDate, zone) && "Vacances"}
           </TableCell>
         </React.Fragment>
       );

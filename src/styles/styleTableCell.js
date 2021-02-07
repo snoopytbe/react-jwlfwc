@@ -9,6 +9,7 @@ const lavenderWeb = "#e2e8fbff";
 const lavenderBlue = "#D8D8FDff";
 const mediumPurple = "#8c8ce6ff";
 const darkBlueGrey = "6F6FAB";
+const orangeYellowCrayola = "FED766";
 const white = "#ffffff";
 const black = "#000000";
 
@@ -41,6 +42,12 @@ export const StyleTableCell = (theme) => ({
     },
     '&[class*="dimanche"]': {
       backgroundColor: darkBlueGrey
+    },
+    '&[class*="ferie"]': {
+      backgroundColor: orangeYellowCrayola
+    },
+    '&[class*="noDate"]': {
+      backgroundColor: white
     }
   }
 });
