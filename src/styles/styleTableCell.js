@@ -1,15 +1,13 @@
 import { withStyles } from "@material-ui/core/styles";
 import TableCell from "@material-ui/core/TableCell";
 
-const xiketic = "#070722ff";
-const royalBlueDark = "#131347ff";
-const persianBlue = "#3838b9ff";
-const magnolia = "#f8f4ffff";
-const lavenderWeb = "#e2e8fbff";
-const lavenderBlue = "#D8D8FDff";
-const mediumPurple = "#8c8ce6ff";
-const darkBlueGrey = "6F6FAB";
-const orangeYellowCrayola = "FED766";
+const couleurAnnee = "#070722ff";
+const couleurMois = "#131347ff";
+const couleurPolice = "#f8f4ffff";
+const couleurDimanche = "#aad5f4";
+const couleurNumeroJour = "D1C7CF";
+const couleurJourFerie = "#33cc66";
+const couleurVacances = "#e60000";
 const white = "#ffffff";
 const black = "#000000";
 
@@ -17,37 +15,53 @@ export const StyleTableCell = (theme) => ({
   root: {
     textAlign: "center",
     border: `1px solid ${white}`,
+    padding: "5px",
+    color: couleurPolice,
 
-    '&[class*="annee"]': {
-      backgroundColor: xiketic,
-      color: magnolia
+    "&.annee": {
+      backgroundColor: couleurAnnee,
+      fontSize: "1.5em"
     },
-    '&[class*="mois"]': {
-      backgroundColor: royalBlueDark,
-      color: magnolia
+    "&.mois": {
+      backgroundColor: couleurMois,
+      fontSize: "1.1em"
     },
-    '&[class*="entete"]': {
-      backgroundColor: persianBlue,
-      color: magnolia
+    "&.numerojour": {
+      backgroundColor: couleurNumeroJour,
+      borderBottomColor: couleurNumeroJour
     },
-    '&[class*="jour"]': {
-      backgroundColor: mediumPurple,
-      color: magnolia
+    "&.jour": {
+      backgroundColor: white,
+      color: black
     },
-    '&[class*="descriptionPaire"]': {
-      backgroundColor: lavenderWeb
+    "&.description": {
+      minWidth: "50px"
     },
-    '&[class*="descriptionImpaire"]': {
-      backgroundColor: lavenderBlue
+    "&.dimanche": {
+      backgroundColor: couleurDimanche,
+      borderLeftColor: couleurDimanche,
+      borderRightColor: couleurDimanche,
+      color: black
     },
-    '&[class*="dimanche"]': {
-      backgroundColor: darkBlueGrey
+    "&.ferie": {
+      backgroundColor: couleurJourFerie,
+      borderLeftColor: couleurJourFerie,
+      borderRightColor: couleurJourFerie,
+      color: black
     },
-    '&[class*="ferie"]': {
-      backgroundColor: orangeYellowCrayola
-    },
-    '&[class*="noDate"]': {
+    "&.noDate": {
       backgroundColor: white
+    },
+    "&.vacances": {
+      maxWidth: "1px",
+      minWidth: "1px",
+      backgroundColor: couleurVacances,
+      borderBottomColor: couleurVacances,
+      borderTopColor: couleurVacances,
+      borderRightColor: couleurNumeroJour
+    },
+    "&.bordvacances": {
+      borderRightColor: couleurNumeroJour
     }
   }
 });

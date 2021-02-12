@@ -1,5 +1,5 @@
 import React from "react";
-import { annee, mois, zone } from "../data/constantes";
+import { annee, mois, zone, data } from "../data/constantes";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -10,20 +10,23 @@ import TableCell from "../styles/styleTableCell";
 import "moment/min/locales.min";
 import estFerie from "./jourFeries";
 import estVacances from "./vacances";
+import { keygen } from "../utils/utils";
 
 export default function Calendier() {
   const lignes = [];
 
-  function keygen() {
-    return Math.random().toString(36).substr(2, 9);
-  }
-
-  function isOdd(x) {
-    return x & 1;
-  }
-
   function colonnes(index) {
     const result = [];
+
+    function classDescription(jour) {
+      return jour.isValid()
+        ? estFerie(jour)
+          ? "ferie"
+          : jour.day() === 0
+          ? "dimanche"
+          : "jour"
+        : "noDate";
+    }
 
     for (let i = 0; i < 11; i++) {
       let myDate = moment(
@@ -32,31 +35,38 @@ export default function Calendier() {
       );
       myDate.locale("fr-FR");
       result.push(
+        // Numéro du jour
         <React.Fragment key={keygen()}>
           <TableCell
             className={
               myDate.isValid()
                 ? estFerie(myDate)
                   ? "ferie"
-                  : "jour"
+                  : "numerojour"
                 : "noDate"
             }
           >
-            {myDate.isValid() && myDate.format("DD dd")}
+            {myDate.isValid() && myDate.format("DD")}
           </TableCell>
+          {/* Initiale du jour */}
+          <TableCell className={classDescription(myDate)}>
+            {myDate.isValid() && myDate.format("dd")[0].toUpperCase()}
+          </TableCell>
+          {/* Occupation du temple */}
+          <TableCell className={"description " + classDescription(myDate)}>
+            Vide
+          </TableCell>
+
+          {/* Vacances scolaires */}
           <TableCell
             className={
               myDate.isValid()
-                ? myDate.day() === 0
-                  ? "jour"
-                  : isOdd(myDate.day())
-                  ? "descriptionImpaire"
-                  : "descriptionPaire"
-                : "white"
+                ? estVacances(myDate, zone)
+                  ? "vacances"
+                  : classDescription(myDate) + " bordvacances"
+                : "noDate"
             }
-          >
-            {estVacances(myDate, zone) && "Vacances"}
-          </TableCell>
+          ></TableCell>
         </React.Fragment>
       );
     }
@@ -73,27 +83,19 @@ export default function Calendier() {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell className="annee" colSpan={8}>
+              <TableCell className="annee" colSpan={16}>
                 {annee}
               </TableCell>
-              <TableCell className="annee" colSpan={14}>
+              <TableCell className="annee" colSpan={28}>
                 {annee + 1}
               </TableCell>
             </TableRow>
             <TableRow>
-              {mois.map((item, index) => (
+              {data["mois"].map((item, index) => (
                 <React.Fragment key={keygen()}>
-                  <TableCell className="mois" colSpan={2}>
-                    {item.label}
+                  <TableCell className="mois" colSpan={4}>
+                    {item}
                   </TableCell>
-                </React.Fragment>
-              ))}
-            </TableRow>
-            <TableRow>
-              {mois.map(() => (
-                <React.Fragment key={keygen()}>
-                  <TableCell className="entete">Jour</TableCell>
-                  <TableCell className="entete">Occupation</TableCell>
                 </React.Fragment>
               ))}
             </TableRow>

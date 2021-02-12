@@ -1,5 +1,14 @@
 import moment from "moment";
 
+export function nthDay(dt, day, number) {
+  var firstDay = moment(dt).date(1).day(day);
+  // Si firstDay est le mois précédent il faut décaler firstDay d'une semaine
+  if (firstDay.month() < dt.month()) firstDay.add(7, "days");
+  var result = firstDay.add((number - 1) * 7, "days");
+  if (result.month() > dt.month()) result = moment.invalid();
+  return result;
+}
+
 function estToussaint(dt) {
   // 3e samedi d'octobre
   var debutVacances = moment(new Date(dt.year(), 9, 1)).day(6 + 2 * 7);
@@ -10,6 +19,8 @@ function estToussaint(dt) {
 }
 
 function debutVacancesNoel(annee) {
+  // Démarre le samedi qui précède Noël
+  // sauf si Noel est un dimanche auquel cas cela démarre le samedi 8 jours avant
   var Noel = moment(new Date(annee, 11, 25));
   return Noel.clone().day(6 - (Noel.day() === 0 ? 2 : 1) * 7);
 }
@@ -21,7 +32,6 @@ function finVacancesNoel(annee) {
 
 function estNoel(dt) {
   // Attention le début et la fin des vacances sont sur deux années différentes
-  // Démarre le samedi qui précède Noël
   var debutVacances = debutVacancesNoel(dt.year());
   var finVacances = finVacancesNoel(dt.year() - 1);
   return (
