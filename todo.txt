@@ -1,0 +1,10 @@
+Ajout de l'horaire
+Ajout d'une date spéciale
+Suppression d'une date spéciale
+Liste d'aperçu d'occupation lors de la saisie
+Affichage du calendrier des occupations
+Export PDF
+Calendrier d'aperçu d'occupation lors de la saisie
+Interdire le dimanche en format récurrent
+Ajout des autres informations de la loge
+Neutraliser la période de Noël
