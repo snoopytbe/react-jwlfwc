@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useForm, Controller, useFieldArray, trigger } from "react-hook-form";
 import {
   Select,
@@ -9,7 +9,7 @@ import {
   InputLabel,
   Button
 } from "@material-ui/core";
-import { data, jours } from "../data/constantes";
+import { data, jours, mois, annee } from "../data/constantes";
 import { keygen } from "../utils/utils";
 import { useStyles } from "../styles/styles";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
@@ -60,7 +60,7 @@ const ControllerSelect = (props) => {
   );
 };
 
-export default function Occupation() {
+export function Occupation() {
   const {
     register,
     control,
@@ -91,14 +91,20 @@ export default function Occupation() {
   }, [fields, register, setValue, trigger]);
 
   const onSubmit = (data) => {
-    var maDate = nthDay(
-      moment(new Date(2020, 8, 1)),
-      jours.reduce((prec, value) => {
-        return prec + (data.donnees[0].jours === value.nom ? value.numero : 0);
-      }, 0),
-      data.donnees[0].numerosjours[0]
-    );
-    //setResultat(maDate.format());
+    var result = [];
+    mois.map((mois) => {
+      let maDate = nthDay(
+        moment(new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)),
+        jours.reduce((prec, value) => {
+          return (
+            prec + (data.donnees[0].jours === value.nom ? value.numero : 0)
+          );
+        }, 0),
+        data.donnees[0].numerosjours[0]
+      );
+      maDate.isValid() && result.push(maDate.format());
+    });
+    setResultat(JSON.stringify(result));
   };
 
   const props = () => {
@@ -116,7 +122,7 @@ export default function Occupation() {
         />
         <Grid {...props()} container>
           {fields.map((item, index) => (
-            <React.Fragment key={keygen()}>
+            <Fragment key={index}>
               <Grid item xs>
                 <ControllerSelect
                   name={`donnees[${index}].numerosjours`}
@@ -168,7 +174,7 @@ export default function Occupation() {
                   />
                 )}
               </Grid>
-            </React.Fragment>
+            </Fragment>
           ))}
         </Grid>
         <Button variant="contained" color="primary" type="submit">

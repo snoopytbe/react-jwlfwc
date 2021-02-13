@@ -1,9 +1,9 @@
-// Inspiré de https://github.com/martinjw/Holiday
+// Inspiré de github.com/martinjw/Holiday
 
 import moment from "moment";
 
 function Paques(year) {
-  //Oudin's Algorithm - http://www.smart.net/~mmontes/oudin.html
+  //Oudin's Algorithm
   var g = year % 19;
   var c = year / 100;
   var h = (c - c / 4 - (8 * c + 13) / 25 + 19 * g + 15) % 30;

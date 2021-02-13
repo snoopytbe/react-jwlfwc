@@ -44,8 +44,7 @@ export default function Calendier() {
                   ? "ferie"
                   : "numerojour"
                 : "noDate"
-            }
-          >
+            }>
             {myDate.isValid() && myDate.format("DD")}
           </TableCell>
           {/* Initiale du jour */}
@@ -66,7 +65,7 @@ export default function Calendier() {
                   : classDescription(myDate) + " bordvacances"
                 : "noDate"
             }
-          ></TableCell>
+          />
         </React.Fragment>
       );
     }
@@ -91,7 +90,7 @@ export default function Calendier() {
               </TableCell>
             </TableRow>
             <TableRow>
-              {data["mois"].map((item, index) => (
+              {data()["mois"].map((item, index) => (
                 <React.Fragment key={keygen()}>
                   <TableCell className="mois" colSpan={4}>
                     {item}

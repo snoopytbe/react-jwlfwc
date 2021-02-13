@@ -14,7 +14,7 @@
     "moment": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-hook-form": "6.15.1"
+    "react-hook-form": "6.15.0"
   },
   "devDependencies": {
     "typescript": "latest",

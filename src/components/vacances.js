@@ -3,15 +3,15 @@ import moment from "moment";
 export function nthDay(dt, day, number) {
   var firstDay = moment(dt).date(1).day(day);
   // Si firstDay est le mois précédent il faut décaler firstDay d'une semaine
-  if (firstDay.month() < dt.month()) firstDay.add(7, "days");
+  if (firstDay.isBefore(moment(dt).startOf("month"))) firstDay.add(7, "days");
   var result = firstDay.add((number - 1) * 7, "days");
-  if (result.month() > dt.month()) result = moment.invalid();
+  if (result.isAfter(moment(dt).endOf("month"))) result = moment.invalid();
   return result;
 }
 
 function estToussaint(dt) {
   // 3e samedi d'octobre
-  var debutVacances = moment(new Date(dt.year(), 9, 1)).day(6 + 2 * 7);
+  var debutVacances = nthDay(new Date(dt.year(), 9, 1), 6, 3);
   var finVacances = debutVacances.clone().add(15, "days");
   return (
     debutVacances.diff(dt, "days") <= 0 && finVacances.diff(dt, "days") >= 0
