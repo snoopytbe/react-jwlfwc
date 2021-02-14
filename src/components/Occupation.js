@@ -7,7 +7,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Button
+  Button,
+  Typography
 } from "@material-ui/core";
 import { data, jours, mois, annee } from "../data/constantes";
 import { keygen } from "../utils/utils";
@@ -24,7 +25,7 @@ const GridContainerProp = {
   spacing: 2
 };
 
-const ControllerSelect = (props) => {
+const ControllerSelect = props => {
   const { dataName, name, control, label, ...other } = props;
   const classes = useStyles();
   return (
@@ -35,19 +36,21 @@ const ControllerSelect = (props) => {
         control={control}
         defaultValue={data()[dataName]["liste"][0]}
         rules={{ required: true }}
-        render={(innerprops) => (
+        render={innerprops => (
           <>
             <InputLabel
               shrink
               id={"label" + name}
-              style={{ background: "#FFFFFF", padding: "0px 4px " }}>
+              style={{ background: "#FFFFFF", padding: "0px 4px " }}
+            >
               {data()[dataName].nom}
             </InputLabel>
             <Select
               labelId={"select" + name}
               value={innerprops.value}
-              onChange={(e) => innerprops.onChange(e.target.value)}>
-              {data()[dataName]["liste"].map((item) => (
+              onChange={e => innerprops.onChange(e.target.value)}
+            >
+              {data()[dataName]["liste"].map(item => (
                 <MenuItem key={keygen()} value={item}>
                   {item}
                 </MenuItem>
@@ -61,46 +64,44 @@ const ControllerSelect = (props) => {
 };
 
 export function Occupation() {
-  const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-    errors,
-    setValue
-  } = useForm();
+  const { register, control, handleSubmit, watch, errors, setValue } = useForm({
+    defaultValues: {
+      regulier: [{ numerosjours: "", jours: "", temple: "", sallehumide: "" }],
+      exceptionnel: []
+    }
+  });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: regulierFields,
+    append: regulierAppend,
+    remove: regulierRemove
+  } = useFieldArray({
     control,
-    name: "donnees"
+    name: "regulier"
+  });
+
+  const {
+    fields: exceptionnelFields,
+    append: exceptionnelAppend,
+    remove: exceptionnelRemove
+  } = useFieldArray({
+    control,
+    name: "exceptionnel"
   });
 
   const [resultat, setResultat] = React.useState("toto");
 
-  const isInitalRender = React.useRef(true);
-
-  React.useEffect(() => {
-    if (!fields.length && !isInitalRender.current) {
-      trigger("donnees");
-    }
-
-    if (isInitalRender.current) {
-      append({ numerosjours: "", jours: "", temple: "", sallehumide: "" });
-      isInitalRender.current = false;
-    }
-  }, [fields, register, setValue, trigger]);
-
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     var result = [];
-    mois.map((mois) => {
+    mois.map(mois => {
       let maDate = nthDay(
         moment(new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)),
         jours.reduce((prec, value) => {
           return (
-            prec + (data.donnees[0].jours === value.nom ? value.numero : 0)
+            prec + (data.regulier[0].jours === value.nom ? value.numero : 0)
           );
         }, 0),
-        data.donnees[0].numerosjours[0]
+        data.regulier[0].numerosjours[0]
       );
       maDate.isValid() && result.push(maDate.format());
     });
@@ -120,63 +121,128 @@ export function Occupation() {
           defaultValue="LBF"
           label="Nom de la loge"
         />
-        <Grid {...props()} container>
-          {fields.map((item, index) => (
-            <Fragment key={index}>
+        <Typography variant="h6">Réservations régulières</Typography>
+
+        {regulierFields.map((item, index) => (
+          <div key={index}>
+            <Grid {...props()} container>
               <Grid item xs>
                 <ControllerSelect
-                  name={`donnees[${index}].numerosjours`}
+                  name={`regulier[${index}].numerosjours`}
                   dataName="numerosjours"
                   control={control}
                 />
               </Grid>
               <Grid item xs>
                 <ControllerSelect
-                  name={`donnees[${index}].jours`}
+                  name={`regulier[${index}].jours`}
                   control={control}
                   dataName="jours"
                 />{" "}
               </Grid>
               <Grid item xs>
                 <ControllerSelect
-                  name={`donnees[${index}].temple`}
+                  name={`regulier[${index}].temple`}
                   control={control}
                   dataName="temple"
                 />{" "}
               </Grid>
               <Grid item xs>
                 <ControllerSelect
-                  name={`donnees[${index}].sallehumide`}
+                  name={`regulier[${index}].sallehumide`}
                   control={control}
                   dataName="sallehumide"
                 />
               </Grid>
-              <Grid item xs={1}>
-                <AddCircleOutlineIcon
-                  color="primary"
-                  onClick={() => {
-                    append({
-                      numerosjours: "",
-                      jours: "",
-                      temple: "",
-                      sallehumide: ""
-                    });
-                  }}
-                  style={{ fontSize: 20 }}
+              <Grid item xs>
+                <ControllerSelect
+                  name={`regulier[${index}].horaires`}
+                  control={control}
+                  dataName="horaires"
                 />
-                {fields.length > 1 && (
+              </Grid>
+              <Grid item xs={1}>
+                {regulierFields.length > 1 && (
                   <RemoveCircleOutlineIcon
                     color="secondary"
                     onClick={() => {
-                      fields.length > 1 && remove(index);
+                      regulierFields.length > 1 && regulierRemove(index);
                     }}
                     style={{ fontSize: 20 }}
                   />
                 )}
               </Grid>
-            </Fragment>
-          ))}
-        </Grid>
+            </Grid>
+          </div>
+        ))}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            regulierAppend({
+              numerosjours: "",
+              jours: "",
+              temple: "",
+              sallehumide: ""
+            });
+          }}
+        >
+          Ajouter réservation
+        </Button>
+        <Typography variant="h6">Réservation exceptionnelle</Typography>
+        {exceptionnelFields.map((item, index) => (
+          <div key={index}>
+            <Grid {...props()} container>
+              <Grid item xs>
+                <ControllerSelect
+                  name={`exceptionnel[${index}].temple`}
+                  control={control}
+                  dataName="temple"
+                />{" "}
+              </Grid>
+              <Grid item xs>
+                <ControllerSelect
+                  name={`exceptionnel[${index}].sallehumide`}
+                  control={control}
+                  dataName="sallehumide"
+                />
+              </Grid>
+              <Grid item xs>
+                <ControllerSelect
+                  name={`exceptionnel[${index}].horaires`}
+                  control={control}
+                  dataName="horaires"
+                />
+              </Grid>
+              <Grid item xs={1}>
+                {regulierFields.length > 1 && (
+                  <RemoveCircleOutlineIcon
+                    color="secondary"
+                    onClick={() => {
+                      exceptionnelFields.length > 1 &&
+                        exceptionnelRemove(index);
+                    }}
+                    style={{ fontSize: 20 }}
+                  />
+                )}
+              </Grid>
+            </Grid>
+          </div>
+        ))}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            exceptionnelAppend({
+              temple: "",
+              sallehumide: "",
+              horaire: ""
+            });
+          }}
+        >
+          Ajouter réservation
+        </Button>
+        <Typography variant="h6" />
         <Button variant="contained" color="primary" type="submit">
           Enregistrer
         </Button>

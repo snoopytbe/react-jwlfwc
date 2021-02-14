@@ -34,8 +34,8 @@ export const data = () => {
     for (let j = 0; j < 2; j++)
       horaires.push(i + "h" + (j === 0 ? "00" : "30"));
 
-  const NomJours = [];
-  jours.map((value) => NomJours.push(value.nom));
+  const nomJours = [];
+  jours.map(value => nomJours.push(value.nom));
 
   return {
     mois: [
@@ -53,13 +53,12 @@ export const data = () => {
     ],
     jours: {
       nom: "Jour",
-      liste: NomJours
+      liste: nomJours
     },
     numerosjours: {
       nom: "Semaine",
       liste: ["1er", "2eme", "3eme", "4eme", "5eme"]
     },
-
     temple: {
       nom: "Temple",
       liste: ["Berteaux (RDC)", "Ramsay (ETG)", "Aucun temple"]
@@ -73,6 +72,9 @@ export const data = () => {
         "Aucune salle humide"
       ]
     },
-    horaire: horaires
+    horaires: {
+      nom: "Heure",
+      liste: horaires
+    }
   };
 };
