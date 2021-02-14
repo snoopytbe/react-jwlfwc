@@ -17,6 +17,14 @@ import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import moment from "moment";
 import { nthDay } from "./vacances";
+import "date-fns";
+import frLocale from "date-fns/locale/fr";
+import format from "date-fns/format";
+import DateFnsUtils from "@date-io/date-fns";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from "@material-ui/pickers";
 
 const GridContainerProp = {
   direction: "row",
@@ -71,6 +79,12 @@ export function Occupation() {
     }
   });
 
+  class LocalizedUtils extends DateFnsUtils {
+    getDatePickerHeaderText(date) {
+      return format(date, "d MMM yyyy", { locale: this.locale });
+    }
+  }
+
   const {
     fields: regulierFields,
     append: regulierAppend,
@@ -105,7 +119,7 @@ export function Occupation() {
       );
       maDate.isValid() && result.push(maDate.format());
     });
-    setResultat(JSON.stringify(result));
+    setResultat(JSON.stringify(data.toto));
   };
 
   const props = () => {
@@ -190,15 +204,43 @@ export function Occupation() {
           Ajouter réservation
         </Button>
         <Typography variant="h6">Réservation exceptionnelle</Typography>
+
         {exceptionnelFields.map((item, index) => (
           <div key={index}>
             <Grid {...props()} container>
+              <Grid item xs>
+                <MuiPickersUtilsProvider
+                  utils={LocalizedUtils}
+                  locale={frLocale}
+                >
+                  <Controller
+                    name={`exceptionnel[${index}].date`}
+                    control={control}
+                    defaultValue={new Date()}
+                    rules={{ required: true }}
+                    render={innerprops => (
+                      <KeyboardDatePicker
+                        id="date-picker-dialog"
+                        label="Date de l'opération"
+                        format="dd/MM/yyyy"
+                        value={innerprops.value}
+                        onChange={date => innerprops.onChange(date)}
+                        KeyboardButtonProps={{
+                          "aria-label": "Changer la date"
+                        }}
+                        okLabel="Valider"
+                        cancelLabel="Annuler"
+                      />
+                    )}
+                  />
+                </MuiPickersUtilsProvider>
+              </Grid>
               <Grid item xs>
                 <ControllerSelect
                   name={`exceptionnel[${index}].temple`}
                   control={control}
                   dataName="temple"
-                />{" "}
+                />
               </Grid>
               <Grid item xs>
                 <ControllerSelect
