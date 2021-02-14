@@ -1,6 +1,6 @@
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 
-export const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles(theme => ({
   root: {
     margin: "15px auto",
     padding: "15px 15px",
@@ -8,6 +8,8 @@ export const useStyles = makeStyles((theme) => ({
   },
   FormControl: {
     margin: theme.spacing(1),
+    minWidth: "100px",
+    maxWidth: "150px"
 
   }
 }));

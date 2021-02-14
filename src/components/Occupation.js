@@ -13,9 +13,9 @@ import {
 import { data, jours, mois, annee } from "../data/constantes";
 import { keygen } from "../utils/utils";
 import { useStyles } from "../styles/styles";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import moment from "moment";
+import "moment/min/locales.min";
 import { nthDay } from "./vacances";
 import "date-fns";
 import frLocale from "date-fns/locale/fr";
@@ -34,7 +34,7 @@ const GridContainerProp = {
 };
 
 const ControllerSelect = props => {
-  const { dataName, name, control, label, ...other } = props;
+  const { dataName, name, defaultValue, control, label, ...other } = props;
   const classes = useStyles();
   return (
     <FormControl required fullWidth className={classes.FormControl}>
@@ -42,7 +42,7 @@ const ControllerSelect = props => {
         {...other}
         name={name}
         control={control}
-        defaultValue={data()[dataName]["liste"][0]}
+        defaultValue={defaultValue}
         rules={{ required: true }}
         render={innerprops => (
           <>
@@ -74,8 +74,29 @@ const ControllerSelect = props => {
 export function Occupation() {
   const { register, control, handleSubmit, watch, errors, setValue } = useForm({
     defaultValues: {
-      regulier: [{ numerosjours: "", jours: "", temple: "", sallehumide: "" }],
-      exceptionnel: []
+      regulier: [
+        {
+          numerosjours: "1er",
+          jours: "mardi",
+          temple: "Berteaux (RDC)",
+          sallehumide: "Les 2 salles humides",
+          heure: "20h30"
+        },
+        {
+          numerosjours: "3eme",
+          jours: "vendredi",
+          temple: "Berteaux (RDC)",
+          sallehumide: "Les 2 salles humides",
+          heure: "20h30"
+        },
+        {
+          numerosjours: "5eme",
+          jours: "vendredi",
+          temple: "Berteaux (RDC)",
+          sallehumide: "Salle humide Jardin",
+          heure: "20h30"
+        }
+      ]
     }
   });
 
@@ -103,27 +124,48 @@ export function Occupation() {
     name: "exceptionnel"
   });
 
-  const [resultat, setResultat] = React.useState("toto");
-
-  const onSubmit = data => {
-    var result = [];
-    mois.map(mois => {
-      let maDate = nthDay(
-        moment(new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)),
-        jours.reduce((prec, value) => {
-          return (
-            prec + (data.regulier[0].jours === value.nom ? value.numero : 0)
-          );
-        }, 0),
-        data.regulier[0].numerosjours[0]
-      );
-      maDate.isValid() && result.push(maDate.format());
-    });
-    setResultat(JSON.stringify(data.toto));
-  };
+  const [resultat, setResultat] = React.useState([]);
 
   const props = () => {
     return GridContainerProp;
+  };
+
+  const onSubmit = data => {
+    const result = [];
+
+    data.regulier.map(reservation => {
+      mois.map(mois => {
+        let maDate = nthDay(
+          moment(
+            new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)
+          ),
+          jours.reduce((prec, value) => {
+            return prec + (reservation.jours === value.nom ? value.numero : 0);
+          }, 0),
+          reservation.numerosjours[0]
+        );
+        maDate.locale("fr-FR");
+        maDate.isValid() && result.push(maDate);
+      });
+    });
+
+    if (data.hasOwnProperty("exceptionnel"))
+      data.exceptionnel.map(exceptionnel => {
+        let maDate = moment(exceptionnel.date);
+        maDate.locale("fr-FR");
+        maDate.isValid() && result.push(maDate);
+      });
+
+    let resultSansDoublon = result.reduce(
+      (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
+      []
+    );
+
+    let resultTrie = resultSansDoublon.sort(
+      (a, b) => a.valueOf() - b.valueOf()
+    );
+
+    setResultat(resultTrie);
   };
 
   return (
@@ -203,7 +245,7 @@ export function Occupation() {
         >
           Ajouter réservation
         </Button>
-        <Typography variant="h6">Réservation exceptionnelle</Typography>
+        <Typography variant="h6">Réservations exceptionnelles</Typography>
 
         {exceptionnelFields.map((item, index) => (
           <div key={index}>
@@ -289,7 +331,9 @@ export function Occupation() {
           Enregistrer
         </Button>
       </form>
-      {resultat}
+      {resultat.map(item => (
+        <p>{item.format("dddd DD/MM/YYYY")}</p>
+      ))}
     </div>
   );
 }

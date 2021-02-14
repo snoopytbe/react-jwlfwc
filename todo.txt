@@ -1,5 +1,5 @@
 Liste d'aperçu d'occupation lors de la saisie
-Mise en forme amélioréee
+Mise en forme améliorée
 Suppression d'une date spéciale
 Affichage du calendrier des occupations
 Export PDF
