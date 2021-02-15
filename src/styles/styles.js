@@ -6,11 +6,14 @@ export const useStyles = makeStyles(theme => ({
     padding: "15px 15px",
     maxWidth: "1500px"
   },
-  FormControl: {
+  formControl: {
     margin: theme.spacing(1),
-    minWidth: "100px",
-    maxWidth: "150px"
 
+  },
+  paper: {
+    margin: theme.spacing(3) + "px 0px",
+    padding: "10px",
+    color: theme.palette.text.secondary,
   }
 }));
 
