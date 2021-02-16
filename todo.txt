@@ -1,3 +1,4 @@
+Remplacer le bouton ajouter par un champs vide
 Suppression d'une date spéciale
 Affichage du calendrier des occupations
 Export PDF

@@ -41,46 +41,49 @@ const ControllerSelect = props => {
     defaultValue,
     control,
     label,
+    required,
     onChangeHandler,
     ...other
   } = props;
   const classes = useStyles();
   return (
-    <FormControl required fullWidth className={classes.formControl}>
-      <Controller
-        {...other}
-        name={name}
-        control={control}
-        defaultValue={defaultValue}
-        rules={{ required: true }}
-        render={innerprops => (
-          <>
-            <InputLabel
-              shrink
-              id={"label" + name}
-              style={{ background: "#FFFFFF", padding: "0px 4px " }}
-            >
-              {data()[dataName].nom}
-            </InputLabel>
-            <Select
-              shrink
-              labelId={"Select" + name}
-              value={innerprops.value}
-              onChange={e => {
-                innerprops.onChange(e.target.value);
-                onChangeHandler();
-              }}
-            >
-              {data()[dataName]["liste"].map(item => (
-                <MenuItem key={keygen()} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </>
-        )}
-      />
-    </FormControl>
+    <Controller
+      {...other}
+      name={name}
+      control={control}
+      defaultValue={defaultValue}
+      rules={{ required: { required } }}
+      render={({ value, onChange }) => (
+        <FormControl
+          required={required}
+          fullWidth
+          className={classes.formControl}
+        >
+          <InputLabel
+            shrink
+            id={"label" + name}
+            style={{ background: "#FFFFFF", padding: "0px 4px " }}
+          >
+            {data()[dataName].nom}
+          </InputLabel>
+          <Select
+            shrink
+            labelId={"Select" + name}
+            value={value}
+            onChange={e => {
+              onChange(e.target.value);
+              onChangeHandler();
+            }}
+          >
+            {data()[dataName]["liste"].map(item => (
+              <MenuItem key={keygen()} value={item}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+    />
   );
 };
 
@@ -152,6 +155,13 @@ export function Occupation() {
           temple: "Berteaux (RDC)",
           sallehumide: "Salle humide Jardin",
           heure: "20h30"
+        },
+        {
+          numerosjours: "",
+          jours: "",
+          temple: "",
+          sallehumide: "",
+          heure: ""
         }
       ],
       suppression: []
@@ -220,18 +230,56 @@ export function Occupation() {
           <Paper className={classes.paper} key={index} elevation={3}>
             <Grid {...props()} container>
               <Grid item xs={4} sm={2}>
-                <ControllerSelect
+                <Controller
+                  name={`regulier[${index}].numerosjours`}
+                  control={control}
+                  defaultValue={item.numerosjours}
+                  ref={register}
+                  rules={{ required: true }}
+                  render={({ value, onChange }) => (
+                    <FormControl
+                      required={true}
+                      fullWidth
+                      className={classes.formControl}
+                    >
+                      <InputLabel
+                        shrink
+                        id={"label"}
+                        style={{ background: "#FFFFFF", padding: "0px 4px " }}
+                      >
+                        {data()["numerosjours"].nom}
+                      </InputLabel>
+                      <Select
+                        shrink
+                        labelId={"Select"}
+                        value={value}
+                        onChange={e => {
+                          onChange(e.target.value);
+                        }}
+                      >
+                        {data()["numerosjours"]["liste"].map(item => (
+                          <MenuItem key={keygen()} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                {/* <ControllerSelect
                   name={`regulier[${index}].numerosjours`}
                   dataName="numerosjours"
                   control={control}
                   onChangeHandler={() => setMySelect(listeDates(getValues()))}
-                />
+                  required={index + 1 !== regulierFields.length}
+                /> 
               </Grid>
               <Grid item xs={4} sm={2}>
                 <ControllerSelect
                   name={`regulier[${index}].jours`}
                   control={control}
                   dataName="jours"
+                  required={index + 1 !== regulierFields.length}
                 />
               </Grid>
               <Grid item xs={4} sm={2}>
@@ -239,6 +287,7 @@ export function Occupation() {
                   name={`regulier[${index}].heure`}
                   control={control}
                   dataName="horaires"
+                  required={index + 1 !== regulierFields.length}
                 />
               </Grid>
               <Grid item xs={4} sm={2}>
@@ -246,25 +295,29 @@ export function Occupation() {
                   name={`regulier[${index}].temple`}
                   control={control}
                   dataName="temple"
-                />{" "}
+                  required={index + 1 !== regulierFields.length}
+                />
               </Grid>
               <Grid item xs={4} sm={3}>
                 <ControllerSelect
                   name={`regulier[${index}].sallehumide`}
                   control={control}
                   dataName="sallehumide"
-                />
+                  required={index + 1 !== regulierFields.length}
+                />*/}
               </Grid>
               <Grid item xs={1} sm={1}>
-                {regulierFields.length > 1 && (
-                  <DeleteIcon
-                    color="primary"
-                    onClick={() => {
-                      regulierFields.length > 1 && regulierRemove(index);
-                    }}
-                    style={{ fontSize: "1.8em" }}
-                  />
-                )}
+                {regulierFields.length > 1 &&
+                  index + 1 !== regulierFields.length && (
+                    <DeleteIcon
+                      color="primary"
+                      onClick={() => {
+                        regulierFields.length > 1 && regulierRemove(index);
+                        console.log(regulierFields);
+                      }}
+                      style={{ fontSize: "1.8em" }}
+                    />
+                  )}
               </Grid>
             </Grid>
           </Paper>
