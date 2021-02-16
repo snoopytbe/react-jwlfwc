@@ -1,5 +1,5 @@
-Remplacer le bouton ajouter par un champs vide
-Suppression d'une date spéciale
+Remplacer le bouton ajouter par un champs vide => onChangeHangler partout
+Suppression d'une date spéciale => prise en compte dans le résultat + mise en forme
 Affichage du calendrier des occupations
 Export PDF
 KeyboardTimePicker pour le choix de l'heure
