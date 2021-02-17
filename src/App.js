@@ -13,8 +13,10 @@ export default function App() {
         <Typography variant="h4">Calendrier</Typography>
 
         <br />
-        {/* <Calendrier /> */}
+
         <Occupation />
+        <br />
+        <Calendrier />
       </div>
     </ThemeProvider>
   );

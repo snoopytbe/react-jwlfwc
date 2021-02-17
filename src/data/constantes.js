@@ -37,11 +37,7 @@ export const data = () => {
   const nomJours = [];
   jours.map(value => nomJours.push(value.nom));
 
-  const nomMois = [];
-  mois.map(value => nomMois.push(value.nom));
-
   return {
-    mois: { nomMois },
     jours: {
       nom: "Jour",
       liste: nomJours

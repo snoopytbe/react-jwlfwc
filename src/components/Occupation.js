@@ -12,7 +12,7 @@ import {
   Paper
 } from "@material-ui/core";
 import { data, jours, mois, annee } from "../data/constantes";
-import { keygen } from "../utils/utils";
+import { initialValues } from "../data/initialValues";
 import { useStyles } from "../styles/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
 import moment from "moment";
@@ -26,52 +26,6 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from "@material-ui/pickers";
-
-const initialValues = {
-  regulier: [
-    {
-      numerosjours: "1er",
-      jours: "mardi",
-      temple: "Berteaux (RDC)",
-      sallehumide: "Les 2 salles humides",
-      heure: "20h30"
-    },
-    {
-      numerosjours: "3eme",
-      jours: "vendredi",
-      temple: "Berteaux (RDC)",
-      sallehumide: "Les 2 salles humides",
-      heure: "20h30"
-    },
-    {
-      numerosjours: "5eme",
-      jours: "vendredi",
-      temple: "Berteaux (RDC)",
-      sallehumide: "Salle humide Jardin",
-      heure: "20h30"
-    },
-    {
-      numerosjours: "",
-      jours: "",
-      temple: "",
-      sallehumide: "",
-      heure: ""
-    }
-  ],
-  exceptionnel: [
-    {
-      date: "",
-      temple: "",
-      sallehumide: "",
-      heure: ""
-    }
-  ],
-  suppression: [
-    {
-      date: ""
-    }
-  ]
-};
 
 const GridContainerProp = {
   direction: "row",
@@ -138,28 +92,35 @@ const listeDates = data => {
   const result = [];
 
   if (data.hasOwnProperty("regulier"))
-    data.regulier.map(reservation => {
-      mois.map(mois => {
-        let maDate = nthDay(
-          moment(
-            new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)
-          ),
-          jours.reduce((prec, value) => {
-            return prec + (reservation.jours === value.nom ? value.numero : 0);
-          }, 0),
-          reservation.numerosjours[0]
-        );
-        maDate.locale("fr-FR");
-        maDate.isValid() && result.push(maDate);
-      });
+    data.regulier.map((reservation, index) => {
+      if (index < data.regulier.length - 1) {
+        mois.map(mois => {
+          let maDate = nthDay(
+            moment(
+              new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)
+            ),
+            jours.reduce((prec, value) => {
+              return (
+                prec + (reservation.jours === value.nom ? value.numero : 0)
+              );
+            }, 0),
+            reservation.numerosjours[0]
+          );
+          maDate.locale("fr-FR");
+          maDate.isValid() && result.push(maDate);
+        });
+      }
     });
 
   if (data.hasOwnProperty("exceptionnel"))
-    data.exceptionnel.map(exceptionnel => {
-      let maDate = moment(exceptionnel.date);
-      maDate.locale("fr-FR");
-      maDate.isValid() && result.push(maDate);
-    });
+    data.exceptionnel.length > 1 &&
+      data.exceptionnel.map(exceptionnel => {
+        if (index < data.exceptionnel.length - 1) {
+          let maDate = moment(exceptionnel.date);
+          maDate.locale("fr-FR");
+          maDate.isValid() && result.push(maDate);
+        }
+      });
 
   let resultSansDoublon = result.reduce(
     (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
@@ -169,6 +130,53 @@ const listeDates = data => {
   let resultTrie = resultSansDoublon.sort((a, b) => a.valueOf() - b.valueOf());
 
   return resultTrie;
+};
+
+const checkLastField = (
+  data,
+  regulierAppend,
+  exceptionnelAppend,
+  suppressionAppend
+) => {
+  if (data.hasOwnProperty("regulier")) {
+    let last = data.regulier[data.regulier.length - 1];
+    let estVide =
+      last.numerosjours === "" &&
+      last.jours === "" &&
+      last.temple === "" &&
+      last.sallehumide === "" &&
+      last.heure === "";
+    if (!estVide)
+      regulierAppend({
+        numerosjours: "",
+        jours: "",
+        temple: "",
+        sallehumide: "",
+        heure: ""
+      });
+  }
+
+  if (data.hasOwnProperty("exceptionnel")) {
+    let last = data.exceptionnel[data.exceptionnel.length - 1];
+    let estVide =
+      last.temple === "" && last.sallehumide === "" && last.heure === "";
+    if (!estVide)
+      exceptionnelAppend({
+        date: "",
+        temple: "",
+        sallehumide: "",
+        heure: ""
+      });
+  }
+
+  if (data.hasOwnProperty("suppression")) {
+    let last = data.suppression[data.suppression.length - 1];
+    let estVide = last.date === "";
+    if (!estVide)
+      suppressionAppend({
+        date: ""
+      });
+  }
 };
 
 export function Occupation() {
@@ -217,6 +225,9 @@ export function Occupation() {
     name: "suppression"
   });
 
+  const [resultat, setResultat] = React.useState([]);
+  const [mySelect, setMySelect] = React.useState([]);
+
   const isInitalRender = React.useRef(true);
 
   React.useEffect(() => {
@@ -224,10 +235,8 @@ export function Occupation() {
       setMySelect(listeDates(initialValues));
       isInitalRender.current = false;
     }
+    setMySelect(listeDates(getValues()));
   }, [regulierFields, register, setValue, trigger]);
-
-  const [resultat, setResultat] = React.useState([]);
-  const [mySelect, setMySelect] = React.useState([]);
 
   const props = () => {
     return GridContainerProp;
@@ -238,47 +247,14 @@ export function Occupation() {
     setMySelect(listeDates(data));
   };
 
-  const checkLastField = () => {
-    const data = getValues();
-    if (data.hasOwnProperty("regulier")) {
-      let last = data.regulier[data.regulier.length - 1];
-      let estVide =
-        last.numerosjours === "" &&
-        last.jours === "" &&
-        last.temple === "" &&
-        last.sallehumide === "" &&
-        last.heure === "";
-      if (!estVide)
-        regulierAppend({
-          numerosjours: "",
-          jours: "",
-          temple: "",
-          sallehumide: "",
-          heure: ""
-        });
-    }
-
-    if (data.hasOwnProperty("exceptionnel")) {
-      let last = data.exceptionnel[data.exceptionnel.length - 1];
-      let estVide =
-        last.temple === "" && last.sallehumide === "" && last.heure === "";
-      if (!estVide)
-        exceptionnelAppend({
-          date: "",
-          temple: "",
-          sallehumide: "",
-          heure: ""
-        });
-    }
-
-    if (data.hasOwnProperty("suppression")) {
-      let last = data.suppression[data.suppression.length - 1];
-      let estVide = last.date === "";
-      if (!estVide)
-        suppressionAppend({
-          date: ""
-        });
-    }
+  const changeHandler = () => {
+    checkLastField(
+      getValues(),
+      regulierAppend,
+      exceptionnelAppend,
+      suppressionAppend
+    );
+    setMySelect(listeDates(getValues()));
   };
 
   const classes = useStyles();
@@ -303,10 +279,7 @@ export function Occupation() {
                     name={`regulier[${index}].numerosjours`}
                     dataName="numerosjours"
                     control={control}
-                    onChangeHandler={() => {
-                      setMySelect(listeDates(getValues()));
-                      checkLastField();
-                    }}
+                    onChangeHandler={changeHandler}
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -314,6 +287,7 @@ export function Occupation() {
                   <ControllerSelect
                     name={`regulier[${index}].jours`}
                     control={control}
+                    onChangeHandler={changeHandler}
                     dataName="jours"
                     required={index + 1 !== regulierFields.length}
                   />
@@ -322,6 +296,7 @@ export function Occupation() {
                   <ControllerSelect
                     name={`regulier[${index}].heure`}
                     control={control}
+                    onChangeHandler={changeHandler}
                     dataName="horaires"
                     required={index + 1 !== regulierFields.length}
                   />
@@ -331,6 +306,7 @@ export function Occupation() {
                     name={`regulier[${index}].temple`}
                     control={control}
                     dataName="temple"
+                    onChangeHandler={changeHandler}
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -338,6 +314,7 @@ export function Occupation() {
                   <ControllerSelect
                     name={`regulier[${index}].sallehumide`}
                     control={control}
+                    onChangeHandler={changeHandler}
                     dataName="sallehumide"
                     required={index + 1 !== regulierFields.length}
                   />
@@ -348,7 +325,9 @@ export function Occupation() {
                       <DeleteIcon
                         color="primary"
                         onClick={() => {
-                          regulierFields.length > 1 && regulierRemove(index);
+                          if (regulierFields.length > 1) {
+                            regulierRemove(index);
+                          }
                         }}
                         style={{ fontSize: "1.8em" }}
                       />
@@ -382,7 +361,10 @@ export function Occupation() {
                           format="dd/MM/yyyy"
                           fullWidth
                           value={innerprops.value}
-                          onChange={date => innerprops.onChange(date)}
+                          onChange={date => {
+                            innerprops.onChange(date);
+                            changeHandler();
+                          }}
                           KeyboardButtonProps={{
                             "aria-label": "Changer la date"
                           }}
@@ -397,17 +379,15 @@ export function Occupation() {
                   <ControllerSelect
                     name={`exceptionnel[${index}].heure`}
                     control={control}
+                    onChangeHandler={changeHandler}
                     dataName="horaires"
-                    onChangeHandler={() => {
-                      setMySelect(listeDates(getValues()));
-                      checkLastField();
-                    }}
                   />
                 </Grid>
                 <Grid item xs={5} sm={3}>
                   <ControllerSelect
                     name={`exceptionnel[${index}].temple`}
                     control={control}
+                    onChangeHandler={changeHandler}
                     dataName="temple"
                   />
                 </Grid>
@@ -415,6 +395,7 @@ export function Occupation() {
                   <ControllerSelect
                     name={`exceptionnel[${index}].sallehumide`}
                     control={control}
+                    onChangeHandler={changeHandler}
                     dataName="sallehumide"
                   />
                 </Grid>
@@ -424,8 +405,9 @@ export function Occupation() {
                       <DeleteIcon
                         color="primary"
                         onClick={() => {
-                          exceptionnelFields.length > 1 &&
+                          if (exceptionnelFields.length > 1) {
                             exceptionnelRemove(index);
+                          }
                         }}
                         style={{ fontSize: "1.8em" }}
                       />
@@ -443,40 +425,42 @@ export function Occupation() {
           return (
             <Paper className={classes.paper} key={item.id} elevation={3}>
               <Grid {...props()} container>
-                <Controller
-                  name={`suppression[${index}].date`}
-                  control={control}
-                  render={({ value, onChange }) => (
-                    <FormControl fullWidth className={classes.formControl}>
-                      <InputLabel
-                        shrink
-                        id={"label" + `suppression[${index}].date`}
-                        style={{ background: "#FFFFFF", padding: "0px 4px " }}
-                      >
-                        Date
-                      </InputLabel>
-                      <Select
-                        shrink
-                        labelId={"label" + `suppression[${index}].date`}
-                        value={value}
-                        onChange={e => {
-                          onChange(e.target.value);
-                          checkLastField();
-                        }}
-                        defaultValue=""
-                      >
-                        {mySelect.map(item => (
-                          <MenuItem
-                            key={item.id}
-                            value={item.format("dddd DD/MM/YYYY")}
-                          >
-                            {item.format("dddd DD/MM/YYYY")}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                />
+                <Grid item xs={4}>
+                  <Controller
+                    name={`suppression[${index}].date`}
+                    control={control}
+                    render={({ value, onChange }) => (
+                      <FormControl fullWidth className={classes.formControl}>
+                        <InputLabel
+                          shrink
+                          id={"label" + `suppression[${index}].date`}
+                          style={{ background: "#FFFFFF", padding: "0px 4px " }}
+                        >
+                          Date
+                        </InputLabel>
+                        <Select
+                          shrink
+                          labelId={"label" + `suppression[${index}].date`}
+                          value={value}
+                          onChange={e => {
+                            onChange(e.target.value);
+                            changeHandler();
+                          }}
+                          defaultValue=""
+                        >
+                          {mySelect.map(item => (
+                            <MenuItem
+                              key={item.id}
+                              value={item.format("dddd DD/MM/YYYY")}
+                            >
+                              {item.format("dddd DD/MM/YYYY")}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  />
+                </Grid>
 
                 <Grid item xs={1} sm={1}>
                   {suppressionFields.length > 1 &&
@@ -484,8 +468,9 @@ export function Occupation() {
                       <DeleteIcon
                         color="primary"
                         onClick={() => {
-                          suppressionFields.length > 1 &&
+                          if (suppressionFields.length > 1) {
                             suppressionRemove(index);
+                          }
                         }}
                         style={{ fontSize: "1.8em" }}
                       />

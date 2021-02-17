@@ -1,6 +1,7 @@
 Remplacer le bouton ajouter par un champs vide => onChangeHangler partout
 Suppression d'une date spéciale => prise en compte dans le résultat + mise en forme
 Affichage du calendrier des occupations
+Import de réservation existante
 Export PDF
 KeyboardTimePicker pour le choix de l'heure
 Calendrier d'aperçu d'occupation lors de la saisie

@@ -90,10 +90,10 @@ export default function Calendier() {
               </TableCell>
             </TableRow>
             <TableRow>
-              {data()["mois"].map((item, index) => (
+              {mois.map((item, index) => (
                 <React.Fragment key={keygen()}>
                   <TableCell className="mois" colSpan={4}>
-                    {item}
+                    {item.nom}
                   </TableCell>
                 </React.Fragment>
               ))}
