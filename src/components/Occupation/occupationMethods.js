@@ -1,7 +1,7 @@
 import { jours, mois, annee } from "../../data/constantes";
 import moment from "moment";
 import "moment/min/locales.min";
-import { nthDay } from "./../vacances";
+import { nthDay } from "../Calendrier/vacances";
 
 export const listeDates = data => {
   const result = [];
@@ -61,9 +61,6 @@ export const listeDates = data => {
         let maDate = moment(dateSansJour, "DD/MM/YYYY").locale("fr-FR");
         if (maDate.isValid()) {
           let pos = resultSansDoublon.indexOf(maDate);
-          console.log(pos);
-          console.log(maDate);
-          console.log(resultSansDoublon);
           resultWithDelete =
             pos >= 0 ? resultSansDoublon.splice(pos, 1) : resultSansDoublon;
         }
