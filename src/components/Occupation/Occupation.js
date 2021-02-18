@@ -81,7 +81,7 @@ export function Occupation() {
       isInitalRender.current = false;
     }
     setMySelect(listeDates(getValues()));
-  }, [regulierFields, register, setValue, trigger]);
+  }, [exceptionnelFields, suppressionFields, regulierFields]);
 
   const props = () => {
     return GridContainerProp;

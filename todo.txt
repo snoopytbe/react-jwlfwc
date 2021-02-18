@@ -1,4 +1,3 @@
-Suppression d'une date spéciale => prise en compte dans le résultat + mise en forme
 Affichage du calendrier des occupations
 Import de réservation existante
 Vérification des champs saisis : pas de date en doublon, pas d'ajout ou suppression invalide
@@ -17,3 +16,4 @@ Ajout d'une date spéciale
 Liste d'aperçu d'occupation lors de la saisie
 Mise en forme améliorée
 Remplacer le bouton ajouter par un champs vide => onChangeHangler partout
+Suppression d'une date spéciale => prise en compte dans le résultat + mise en forme

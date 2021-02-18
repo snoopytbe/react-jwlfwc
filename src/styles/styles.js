@@ -4,7 +4,8 @@ export const useStyles = makeStyles(theme => ({
   root: {
     margin: "15px auto",
     padding: "15px 15px",
-    maxWidth: "1500px"
+    maxWidth: "1500px",
+    minWidth: "400px"
   },
   formControl: {
     margin: theme.spacing(1),
