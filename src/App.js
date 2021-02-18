@@ -3,7 +3,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { theme, useStyles } from "./styles/styles";
 import Calendrier from "./components/Calendrier";
-import { Occupation } from "./components/Occupation";
+import { Occupation } from "./components/Occupation/Occupation";
 
 export default function App() {
   const classes = useStyles();

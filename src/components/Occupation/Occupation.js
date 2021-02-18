@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm, Controller, useFieldArray, trigger } from "react-hook-form";
 import {
   Select,
@@ -11,13 +11,9 @@ import {
   Typography,
   Paper
 } from "@material-ui/core";
-import { data, jours, mois, annee } from "../data/constantes";
-import { initialValues } from "../data/initialValues";
-import { useStyles } from "../styles/styles";
+import { initialValues } from "../../data/initialValues";
+import { useStyles } from "../../styles/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
-import moment from "moment";
-import "moment/min/locales.min";
-import { nthDay } from "./vacances";
 import "date-fns";
 import frLocale from "date-fns/locale/fr";
 import format from "date-fns/format";
@@ -26,6 +22,8 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from "@material-ui/pickers";
+import { ControllerSelect } from "./ControllerSelect";
+import { listeDates, checkLastField } from "./occupationMethods";
 
 const GridContainerProp = {
   direction: "row",
@@ -34,161 +32,8 @@ const GridContainerProp = {
   spacing: 2
 };
 
-const ControllerSelect = props => {
-  const {
-    dataName,
-    name,
-    defaultValue,
-    control,
-    label,
-    required,
-    onChangeHandler,
-    ...other
-  } = props;
-  const classes = useStyles();
-  return (
-    <Controller
-      {...other}
-      name={name}
-      control={control}
-      defaultValue={defaultValue}
-      rules={{ required: { required } }}
-      render={({ value, onChange }) => (
-        <FormControl
-          required={required}
-          fullWidth
-          className={classes.formControl}
-        >
-          <InputLabel
-            shrink
-            id={"label" + name}
-            style={{ background: "#FFFFFF", padding: "0px 4px " }}
-          >
-            {data()[dataName].nom}
-          </InputLabel>
-          <Select
-            shrink
-            labelId={"Select" + name}
-            defaultValue=""
-            value={value}
-            onChange={e => {
-              onChange(e.target.value);
-              onChangeHandler();
-            }}
-          >
-            {data()[dataName]["liste"].map(item => (
-              <MenuItem key={item.id} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
-    />
-  );
-};
-
-const listeDates = data => {
-  const result = [];
-
-  if (data.hasOwnProperty("regulier"))
-    data.regulier.map((reservation, index) => {
-      if (index < data.regulier.length - 1) {
-        mois.map(mois => {
-          let maDate = nthDay(
-            moment(
-              new Date(annee + (mois.numero < 9 ? 1 : 0), mois.numero - 1, 1)
-            ),
-            jours.reduce((prec, value) => {
-              return (
-                prec + (reservation.jours === value.nom ? value.numero : 0)
-              );
-            }, 0),
-            reservation.numerosjours[0]
-          );
-          maDate.locale("fr-FR");
-          maDate.isValid() && result.push(maDate);
-        });
-      }
-    });
-
-  if (data.hasOwnProperty("exceptionnel"))
-    data.exceptionnel.length > 1 &&
-      data.exceptionnel.map(exceptionnel => {
-        if (index < data.exceptionnel.length - 1) {
-          let maDate = moment(exceptionnel.date);
-          maDate.locale("fr-FR");
-          maDate.isValid() && result.push(maDate);
-        }
-      });
-
-  let resultSansDoublon = result.reduce(
-    (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
-    []
-  );
-
-  let resultTrie = resultSansDoublon.sort((a, b) => a.valueOf() - b.valueOf());
-
-  return resultTrie;
-};
-
-const checkLastField = (
-  data,
-  regulierAppend,
-  exceptionnelAppend,
-  suppressionAppend
-) => {
-  if (data.hasOwnProperty("regulier")) {
-    let last = data.regulier[data.regulier.length - 1];
-    let estVide =
-      last.numerosjours === "" &&
-      last.jours === "" &&
-      last.temple === "" &&
-      last.sallehumide === "" &&
-      last.heure === "";
-    if (!estVide)
-      regulierAppend({
-        numerosjours: "",
-        jours: "",
-        temple: "",
-        sallehumide: "",
-        heure: ""
-      });
-  }
-
-  if (data.hasOwnProperty("exceptionnel")) {
-    let last = data.exceptionnel[data.exceptionnel.length - 1];
-    let estVide =
-      last.temple === "" && last.sallehumide === "" && last.heure === "";
-    if (!estVide)
-      exceptionnelAppend({
-        date: "",
-        temple: "",
-        sallehumide: "",
-        heure: ""
-      });
-  }
-
-  if (data.hasOwnProperty("suppression")) {
-    let last = data.suppression[data.suppression.length - 1];
-    let estVide = last.date === "";
-    if (!estVide)
-      suppressionAppend({
-        date: ""
-      });
-  }
-};
-
 export function Occupation() {
-  const {
-    register,
-    control,
-    handleSubmit,
-    getValues,
-    reference,
-    errors,
-    setValue
-  } = useForm({
+  const { register, control, handleSubmit, getValues, setValue } = useForm({
     defaultValues: initialValues
   });
 
