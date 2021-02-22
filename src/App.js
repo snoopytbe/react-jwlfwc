@@ -16,7 +16,6 @@ export default function App() {
 
         <Occupation />
         <br />
-        <Calendrier />
       </div>
     </ThemeProvider>
   );

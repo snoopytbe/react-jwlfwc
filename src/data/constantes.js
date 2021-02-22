@@ -59,7 +59,7 @@ export const data = () => {
         "Aucune salle humide"
       ]
     },
-    horaires: {
+    heure: {
       nom: "Heure",
       liste: horaires
     }

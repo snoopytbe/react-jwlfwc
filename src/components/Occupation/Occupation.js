@@ -24,12 +24,25 @@ import {
 } from "@material-ui/pickers";
 import { ControllerSelect } from "./ControllerSelect";
 import { listeDates, checkLastField } from "./occupationMethods";
+import { Calendrier } from "../Calendrier/Calendrier";
 
 const GridContainerProp = {
   direction: "row",
   justify: "flex-start",
   alignItems: "center",
   spacing: 2
+};
+
+const useStateWithLocalStorage = localStorageKey => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(localStorageKey) || initialValues
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem(localStorageKey, value);
+  }, [value]);
+
+  return [value, setValue];
 };
 
 export function Occupation() {
@@ -71,35 +84,34 @@ export function Occupation() {
   });
 
   const [resultat, setResultat] = React.useState([]);
-  const [mySelect, setMySelect] = React.useState([]);
-
-  const isInitalRender = React.useRef(true);
+  const [modified, setModified] = React.useState(true);
 
   React.useEffect(() => {
-    if (isInitalRender.current) {
-      setMySelect(listeDates(initialValues));
-      isInitalRender.current = false;
-    }
-    setMySelect(listeDates(getValues()));
-  }, [exceptionnelFields, suppressionFields, regulierFields]);
+    setResultat(listeDates(initialValues));
+  }, []);
+
+  React.useEffect(() => {
+    let values = getValues();
+    checkLastField(
+      values,
+      regulierAppend,
+      exceptionnelAppend,
+      suppressionAppend
+    );
+    setResultat(listeDates(values));
+    setModified(false);
+  }, [modified]);
 
   const props = () => {
     return GridContainerProp;
   };
 
   const onSubmit = data => {
-    setResultat(listeDates(data));
-    setMySelect(listeDates(data));
+    //setResultat(listeDates(data));
   };
 
   const changeHandler = () => {
-    checkLastField(
-      getValues(),
-      regulierAppend,
-      exceptionnelAppend,
-      suppressionAppend
-    );
-    setMySelect(listeDates(getValues()));
+    setModified(true);
   };
 
   const classes = useStyles();
@@ -124,6 +136,9 @@ export function Occupation() {
                     name={`regulier[${index}].numerosjours`}
                     dataName="numerosjours"
                     control={control}
+                    defaultValue={
+                      initialValues.regulier[index].numerosjours || ""
+                    }
                     onChangeHandler={changeHandler}
                     required={index + 1 !== regulierFields.length}
                   />
@@ -134,6 +149,7 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     dataName="jours"
+                    defaultValue={initialValues.regulier[index].jours || ""}
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -142,7 +158,8 @@ export function Occupation() {
                     name={`regulier[${index}].heure`}
                     control={control}
                     onChangeHandler={changeHandler}
-                    dataName="horaires"
+                    dataName="heure"
+                    defaultValue={initialValues.regulier[index].heure || ""}
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -152,6 +169,7 @@ export function Occupation() {
                     control={control}
                     dataName="temple"
                     onChangeHandler={changeHandler}
+                    defaultValue={initialValues.regulier[index].temple || ""}
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -161,6 +179,9 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     dataName="sallehumide"
+                    defaultValue={
+                      initialValues.regulier[index].sallehumide || ""
+                    }
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -225,7 +246,7 @@ export function Occupation() {
                     name={`exceptionnel[${index}].heure`}
                     control={control}
                     onChangeHandler={changeHandler}
-                    dataName="horaires"
+                    dataName="heure"
                   />
                 </Grid>
                 <Grid item xs={5} sm={3}>
@@ -293,7 +314,7 @@ export function Occupation() {
                           }}
                           defaultValue=""
                         >
-                          {mySelect.map(item => (
+                          {resultat.map(item => (
                             <MenuItem
                               key={item.id}
                               value={item.format("dddd DD/MM/YYYY")}
@@ -328,13 +349,11 @@ export function Occupation() {
 
         <Typography variant="h6" />
         <Button variant="contained" color="primary" type="submit">
-          Enregistrer
+          Valider
         </Button>
-        <Typography />
+        <Typography variant="h6" />
+        <Calendrier data={resultat} />
       </form>
-      {resultat.map(item => (
-        <p>{item.format("dddd DD/MM/YYYY")}</p>
-      ))}
     </div>
   );
 }

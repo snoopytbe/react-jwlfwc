@@ -14,11 +14,11 @@ import estVacances from "./vacances";
 import { keygen } from "../../utils/utils";
 import { listeDates } from "../Occupation/occupationMethods";
 
-export default function Calendier() {
+export  function Calendrier(props) {
   const lignes = [];
 
-  const datesOccupation = listeDates(initialValues);
-  console.log(datesOccupation);
+  const datesOccupation = props.data;
+  console.log(datesOccupation)
 
   function colonnes(index) {
     const result = [];
@@ -102,7 +102,7 @@ export default function Calendier() {
             </TableRow>
             <TableRow>
               {mois.map((item, index) => (
-                <React.Fragment key={keygen()}>
+                <React.Fragment key={item.id}>
                   <TableCell className="mois" colSpan={4}>
                     {item.nom}
                   </TableCell>
