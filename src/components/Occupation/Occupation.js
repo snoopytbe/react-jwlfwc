@@ -25,6 +25,7 @@ import {
 import { ControllerSelect } from "./ControllerSelect";
 import { listeDates, checkLastField } from "./occupationMethods";
 import { Calendrier } from "../Calendrier/Calendrier";
+import moment from "moment";
 
 const GridContainerProp = {
   direction: "row",
@@ -218,7 +219,11 @@ export function Occupation() {
                     <Controller
                       name={`exceptionnel[${index}].date`}
                       control={control}
-                      defaultValue={new Date()}
+                      defaultValue={
+                      typeof initialValues.exceptionnel[index] === "undefined"
+                        ? new Date()
+                        : moment(initialValues.exceptionnel[index].date,"DD/MM/YYYY").toDate()
+                    }
                       rules={{ required: true }}
                       render={innerprops => (
                         <KeyboardDatePicker
@@ -246,6 +251,11 @@ export function Occupation() {
                     name={`exceptionnel[${index}].heure`}
                     control={control}
                     onChangeHandler={changeHandler}
+                    defaultValue={
+                      typeof initialValues.exceptionnel[index] === "undefined"
+                        ? ""
+                        : initialValues.exceptionnel[index].heure
+                    }
                     dataName="heure"
                   />
                 </Grid>
@@ -254,6 +264,11 @@ export function Occupation() {
                     name={`exceptionnel[${index}].temple`}
                     control={control}
                     onChangeHandler={changeHandler}
+                    defaultValue={
+                      typeof initialValues.exceptionnel[index] === "undefined"
+                        ? ""
+                        : initialValues.exceptionnel[index].temple
+                    }
                     dataName="temple"
                   />
                 </Grid>
@@ -262,6 +277,11 @@ export function Occupation() {
                     name={`exceptionnel[${index}].sallehumide`}
                     control={control}
                     onChangeHandler={changeHandler}
+                    defaultValue={
+                      typeof initialValues.exceptionnel[index] === "undefined"
+                        ? ""
+                        : initialValues.exceptionnel[index].sallehumide
+                    }
                     dataName="sallehumide"
                   />
                 </Grid>
@@ -308,11 +328,16 @@ export function Occupation() {
                           shrink
                           labelId={"label" + `suppression[${index}].date`}
                           value={value}
+                          defaultValue={
+                            typeof initialValues.suppression[index] ===
+                            "undefined"
+                              ? ""
+                              : initialValues.suppression[index].date
+                          }
                           onChange={e => {
                             onChange(e.target.value);
                             changeHandler();
                           }}
-                          defaultValue=""
                         >
                           {resultat.map(item => (
                             <MenuItem

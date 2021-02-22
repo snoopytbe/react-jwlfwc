@@ -31,10 +31,10 @@ export const initialValues = {
   ],
   exceptionnel: [
     {
-      date: "",
-      temple: "",
-      sallehumide: "",
-      heure: ""
+      date: "23/02/2021",
+      temple: "Berteaux (RDC)",
+      sallehumide: "Salle humide Jardin",
+      heure: "20h30"
     }
   ],
   suppression: [
