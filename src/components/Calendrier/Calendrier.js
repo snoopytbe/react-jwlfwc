@@ -18,7 +18,6 @@ export  function Calendrier(props) {
   const lignes = [];
 
   const datesOccupation = props.data;
-  console.log(datesOccupation)
 
   function colonnes(index) {
     const result = [];
@@ -41,7 +40,7 @@ export  function Calendrier(props) {
       myDate.locale("fr-FR");
       result.push(
         // Numéro du jour
-        <React.Fragment key={keygen()}>
+        <React.Fragment>
           <TableCell
             className={
               myDate.isValid()
@@ -84,7 +83,7 @@ export  function Calendrier(props) {
   }
 
   for (let i = 0; i < 31; i++) {
-    lignes.push(<TableRow key={keygen()}>{colonnes(i)}</TableRow>);
+    lignes.push(<TableRow>{colonnes(i)}</TableRow>);
   }
 
   return (

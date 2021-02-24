@@ -26,6 +26,7 @@ import { ControllerSelect } from "./ControllerSelect";
 import { listeDates, checkLastField } from "./occupationMethods";
 import { Calendrier } from "../Calendrier/Calendrier";
 import moment from "moment";
+import { PaperFieldOccupation } from "./PaperFieldOccupation";
 
 const GridContainerProp = {
   direction: "row",
@@ -35,12 +36,14 @@ const GridContainerProp = {
 };
 
 const useStateWithLocalStorage = localStorageKey => {
-  const [value, setValue] = React.useState(
-    localStorage.getItem(localStorageKey) || initialValues
-  );
+  var storedValue = localStorage.getItem(localStorageKey);
+  storedValue = JSON.parse(storedValue);
+  console.log(storedValue);
+  if (!storedValue.hasOwnProperty("regulier")) storedValue = initialValues;
+  const [value, setValue] = React.useState(storedValue);
 
   React.useEffect(() => {
-    localStorage.setItem(localStorageKey, value);
+    localStorage.setItem(localStorageKey, JSON.stringify(value));
   }, [value]);
 
   return [value, setValue];
@@ -48,7 +51,7 @@ const useStateWithLocalStorage = localStorageKey => {
 
 export function Occupation() {
   const { register, control, handleSubmit, getValues, setValue } = useForm({
-    defaultValues: initialValues
+    defaultValues: localStorage.getItem("data") || initialValues
   });
 
   class LocalizedUtils extends DateFnsUtils {
@@ -86,9 +89,10 @@ export function Occupation() {
 
   const [resultat, setResultat] = React.useState([]);
   const [modified, setModified] = React.useState(true);
+  const [data, setData] = useStateWithLocalStorage("data");
 
   React.useEffect(() => {
-    setResultat(listeDates(initialValues));
+    setResultat(listeDates(data));
   }, []);
 
   React.useEffect(() => {
@@ -108,7 +112,7 @@ export function Occupation() {
   };
 
   const onSubmit = data => {
-    //setResultat(listeDates(data));
+    setData(data);
   };
 
   const changeHandler = () => {
@@ -116,6 +120,11 @@ export function Occupation() {
   };
 
   const classes = useStyles();
+
+  const calendrierMemoized = React.useMemo(
+    () => <Calendrier data={resultat} />,
+    [resultat]
+  );
 
   return (
     <div style={{ flexGrow: 1 }}>
@@ -130,6 +139,28 @@ export function Occupation() {
 
         {regulierFields.map((item, index) => {
           return (
+            <PaperFieldOccupation
+              key={item.id}
+              index={index}
+              field="regulier"
+              fieldNames={[
+                "numerosjours",
+                "jours",
+                "heure",
+                "temple",
+                "sallehumide"
+              ]}
+              control={control}
+              changeHandler={changeHandler}
+              removeHandler={regulierRemove}
+              paperStyle={classes.paper}
+              data={data}
+            />
+          );
+        })}
+
+        {/*      {regulierFields.map((item, index) => {
+          return (
             <Paper className={classes.paper} key={item.id} elevation={3}>
               <Grid {...props()} container>
                 <Grid item xs={4} sm={2}>
@@ -138,7 +169,9 @@ export function Occupation() {
                     dataName="numerosjours"
                     control={control}
                     defaultValue={
-                      initialValues.regulier[index].numerosjours || ""
+                      typeof data.regulier[index] === "undefined"
+                        ? ""
+                        : data.regulier[index].numerosjours
                     }
                     onChangeHandler={changeHandler}
                     required={index + 1 !== regulierFields.length}
@@ -150,7 +183,11 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     dataName="jours"
-                    defaultValue={initialValues.regulier[index].jours || ""}
+                    defaultValue={
+                      typeof data.regulier[index] === "undefined"
+                        ? ""
+                        : data.regulier[index].jours
+                    }
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -160,7 +197,11 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     dataName="heure"
-                    defaultValue={initialValues.regulier[index].heure || ""}
+                    defaultValue={
+                      typeof data.regulier[index] === "undefined"
+                        ? ""
+                        : data.regulier[index].heure
+                    }
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -170,7 +211,11 @@ export function Occupation() {
                     control={control}
                     dataName="temple"
                     onChangeHandler={changeHandler}
-                    defaultValue={initialValues.regulier[index].temple || ""}
+                    defaultValue={
+                      typeof data.regulier[index] === "undefined"
+                        ? ""
+                        : data.regulier[index].temple
+                    }
                     required={index + 1 !== regulierFields.length}
                   />
                 </Grid>
@@ -181,7 +226,9 @@ export function Occupation() {
                     onChangeHandler={changeHandler}
                     dataName="sallehumide"
                     defaultValue={
-                      initialValues.regulier[index].sallehumide || ""
+                      typeof data.regulier[index] === "undefined"
+                        ? ""
+                        : data.regulier[index].sallehumide
                     }
                     required={index + 1 !== regulierFields.length}
                   />
@@ -203,7 +250,7 @@ export function Occupation() {
               </Grid>
             </Paper>
           );
-        })}
+        })} */}
 
         <Typography variant="h6">Réservations exceptionnelles</Typography>
 
@@ -220,10 +267,10 @@ export function Occupation() {
                       name={`exceptionnel[${index}].date`}
                       control={control}
                       defaultValue={
-                      typeof initialValues.exceptionnel[index] === "undefined"
-                        ? new Date()
-                        : moment(initialValues.exceptionnel[index].date,"DD/MM/YYYY").toDate()
-                    }
+                        data.exceptionnel[index]?.date
+                          ? moment(data.exceptionnel[index].date).toDate()
+                          : new Date()
+                      }
                       rules={{ required: true }}
                       render={innerprops => (
                         <KeyboardDatePicker
@@ -252,9 +299,9 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     defaultValue={
-                      typeof initialValues.exceptionnel[index] === "undefined"
+                      typeof data.exceptionnel[index] === "undefined"
                         ? ""
-                        : initialValues.exceptionnel[index].heure
+                        : data.exceptionnel[index].heure
                     }
                     dataName="heure"
                   />
@@ -265,9 +312,9 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     defaultValue={
-                      typeof initialValues.exceptionnel[index] === "undefined"
+                      typeof data.exceptionnel[index] === "undefined"
                         ? ""
-                        : initialValues.exceptionnel[index].temple
+                        : data.exceptionnel[index].temple
                     }
                     dataName="temple"
                   />
@@ -278,9 +325,9 @@ export function Occupation() {
                     control={control}
                     onChangeHandler={changeHandler}
                     defaultValue={
-                      typeof initialValues.exceptionnel[index] === "undefined"
+                      typeof data.exceptionnel[index] === "undefined"
                         ? ""
-                        : initialValues.exceptionnel[index].sallehumide
+                        : data.exceptionnel[index].sallehumide
                     }
                     dataName="sallehumide"
                   />
@@ -325,14 +372,12 @@ export function Occupation() {
                           Date
                         </InputLabel>
                         <Select
-                          shrink
                           labelId={"label" + `suppression[${index}].date`}
                           value={value}
                           defaultValue={
-                            typeof initialValues.suppression[index] ===
-                            "undefined"
+                            typeof data.suppression[index] === "undefined"
                               ? ""
-                              : initialValues.suppression[index].date
+                              : data.suppression[index].date
                           }
                           onChange={e => {
                             onChange(e.target.value);
@@ -377,7 +422,7 @@ export function Occupation() {
           Valider
         </Button>
         <Typography variant="h6" />
-        <Calendrier data={resultat} />
+        {calendrierMemoized}
       </form>
     </div>
   );
