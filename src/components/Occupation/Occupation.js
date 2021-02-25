@@ -38,7 +38,6 @@ const GridContainerProp = {
 const useStateWithLocalStorage = localStorageKey => {
   var storedValue = localStorage.getItem(localStorageKey);
   storedValue = JSON.parse(storedValue);
-  console.log(storedValue);
   if (!storedValue.hasOwnProperty("regulier")) storedValue = initialValues;
   const [value, setValue] = React.useState(storedValue);
 
@@ -50,8 +49,10 @@ const useStateWithLocalStorage = localStorageKey => {
 };
 
 export function Occupation() {
+  const [data, setData] = useStateWithLocalStorage("data");
+
   const { register, control, handleSubmit, getValues, setValue } = useForm({
-    defaultValues: localStorage.getItem("data") || initialValues
+    defaultValues: data
   });
 
   class LocalizedUtils extends DateFnsUtils {
@@ -89,7 +90,7 @@ export function Occupation() {
 
   const [resultat, setResultat] = React.useState([]);
   const [modified, setModified] = React.useState(true);
-  const [data, setData] = useStateWithLocalStorage("data");
+  
 
   React.useEffect(() => {
     setResultat(listeDates(data));
@@ -141,7 +142,7 @@ export function Occupation() {
           return (
             <PaperFieldOccupation
               key={item.id}
-              index={index}
+              indexField={index}
               field="regulier"
               fieldNames={[
                 "numerosjours",
@@ -159,100 +160,8 @@ export function Occupation() {
           );
         })}
 
-        {/*      {regulierFields.map((item, index) => {
-          return (
-            <Paper className={classes.paper} key={item.id} elevation={3}>
-              <Grid {...props()} container>
-                <Grid item xs={4} sm={2}>
-                  <ControllerSelect
-                    name={`regulier[${index}].numerosjours`}
-                    dataName="numerosjours"
-                    control={control}
-                    defaultValue={
-                      typeof data.regulier[index] === "undefined"
-                        ? ""
-                        : data.regulier[index].numerosjours
-                    }
-                    onChangeHandler={changeHandler}
-                    required={index + 1 !== regulierFields.length}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={2}>
-                  <ControllerSelect
-                    name={`regulier[${index}].jours`}
-                    control={control}
-                    onChangeHandler={changeHandler}
-                    dataName="jours"
-                    defaultValue={
-                      typeof data.regulier[index] === "undefined"
-                        ? ""
-                        : data.regulier[index].jours
-                    }
-                    required={index + 1 !== regulierFields.length}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={2}>
-                  <ControllerSelect
-                    name={`regulier[${index}].heure`}
-                    control={control}
-                    onChangeHandler={changeHandler}
-                    dataName="heure"
-                    defaultValue={
-                      typeof data.regulier[index] === "undefined"
-                        ? ""
-                        : data.regulier[index].heure
-                    }
-                    required={index + 1 !== regulierFields.length}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={2}>
-                  <ControllerSelect
-                    name={`regulier[${index}].temple`}
-                    control={control}
-                    dataName="temple"
-                    onChangeHandler={changeHandler}
-                    defaultValue={
-                      typeof data.regulier[index] === "undefined"
-                        ? ""
-                        : data.regulier[index].temple
-                    }
-                    required={index + 1 !== regulierFields.length}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <ControllerSelect
-                    name={`regulier[${index}].sallehumide`}
-                    control={control}
-                    onChangeHandler={changeHandler}
-                    dataName="sallehumide"
-                    defaultValue={
-                      typeof data.regulier[index] === "undefined"
-                        ? ""
-                        : data.regulier[index].sallehumide
-                    }
-                    required={index + 1 !== regulierFields.length}
-                  />
-                </Grid>
-                <Grid item xs={1} sm={1}>
-                  {regulierFields.length > 1 &&
-                    index + 1 !== regulierFields.length && (
-                      <DeleteIcon
-                        color="primary"
-                        onClick={() => {
-                          if (regulierFields.length > 1) {
-                            regulierRemove(index);
-                          }
-                        }}
-                        style={{ fontSize: "1.8em" }}
-                      />
-                    )}
-                </Grid>
-              </Grid>
-            </Paper>
-          );
-        })} */}
-
         <Typography variant="h6">Réservations exceptionnelles</Typography>
+  
 
         {exceptionnelFields.map((item, index) => {
           return (

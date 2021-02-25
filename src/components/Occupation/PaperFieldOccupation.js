@@ -2,6 +2,7 @@ import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { ControllerSelect } from "./ControllerSelect";
+import { structureForm } from "../../data/constantes";
 
 const GridContainerProp = {
   direction: "row",
@@ -12,7 +13,7 @@ const GridContainerProp = {
 
 export function PaperFieldOccupation(props) {
   const {
-    index,
+    indexField,
     field,
     fieldNames,
     control,
@@ -26,27 +27,27 @@ export function PaperFieldOccupation(props) {
   return (
     <Paper className={paperStyle} elevation={3} {...others}>
       <Grid {...GridContainerProp} container>
-        {fieldNames.map((item, index) => {
+        {structureForm[field].map((item, index) => {
           return (
             <Grid
               item
               xs={4}
-              sm={(index === (fieldNames.length - 1)) ? 3 : 2}
+              sm={index === fieldNames.length - 1 ? 3 : 2}
               key={item.id}
             >
               <ControllerSelect
-                name={`${field}[${index}].${item}`}
-                dataName={item}
-                defaultValue={data[field][index]?.[item] ?? ""}
+                name={`${field}[${indexField}].${item.nom}`}
+                dataName={item.nom}
+                defaultValue={data[field][indexField]?.[item.nom] ?? ""}
                 control={control}
                 onChangeHandler={changeHandler}
-                required={index + 1 !== data[field].length}
+                required={indexField + 1 !== data[field].length}
               />
             </Grid>
           );
         })}
         <Grid item xs={1} sm={1}>
-          {data[field].length > 1 && index + 1 !== data[field].length && (
+          {data[field].length > 1 && indexField + 1 !== data[field].length && (
             <DeleteIcon
               color="primary"
               onClick={() => {

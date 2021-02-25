@@ -28,6 +28,25 @@ export const mois = [
   { nom: "Juillet", numero: 7 }
 ];
 
+export const structureForm =  {
+  regulier: [
+    { nom: "numerosjours", type: "Select"},
+    { nom: "jours", type: "Select"},
+    { nom: "temple", type: "Select"},
+    { nom: "sallehumide", type: "Select"},
+    { nom: "heure", type: "Select"}
+  ],
+  exceptionnel: [
+    { nom: "date", type: "DatePicker"},
+    { nom: "temple", type: "Select"},
+    { nom: "sallehumide", type: "Select"},
+    { nom: "heure", type: "Select"}
+  ],
+  suppression: [
+    { nom: "date", type: "Select"}
+  ]
+}
+
 export const data = () => {
   const horaires = [];
   for (let i = 9; i <= 23; i++)

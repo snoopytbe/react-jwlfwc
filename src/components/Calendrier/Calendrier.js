@@ -1,6 +1,5 @@
 import React from "react";
-import { annee, mois, zone, data } from "../../data/constantes";
-import { initialValues } from "../../data/initialValues";
+import { annee, mois, zone } from "../../data/constantes";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -11,8 +10,7 @@ import TableCell from "../../styles/styleTableCell";
 import "moment/min/locales.min";
 import estFerie from "./jourFeries";
 import estVacances from "./vacances";
-import { keygen } from "../../utils/utils";
-import { listeDates } from "../Occupation/occupationMethods";
+
 
 export  function Calendrier(props) {
   const lignes = [];
