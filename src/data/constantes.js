@@ -30,20 +30,20 @@ export const mois = [
 
 export const structureForm =  {
   regulier: [
-    { nom: "numerosjours", type: "Select"},
-    { nom: "jours", type: "Select"},
-    { nom: "temple", type: "Select"},
-    { nom: "sallehumide", type: "Select"},
-    { nom: "heure", type: "Select"}
+    { nom: "numerosjours", type: "Select", xs: 4, sm:2},
+    { nom: "jours", type: "Select", xs: 4, sm:2},
+    { nom: "temple", type: "Select", xs: 4, sm:2},
+    { nom: "sallehumide", type: "Select", xs: 4, sm:2},
+    { nom: "heure", type: "Select", xs: 4, sm:3}
   ],
   exceptionnel: [
-    { nom: "date", type: "DatePicker"},
-    { nom: "temple", type: "Select"},
-    { nom: "sallehumide", type: "Select"},
-    { nom: "heure", type: "Select"}
+    { nom: "date", type: "DatePicker", xs: 4, sm:2},
+    { nom: "temple", type: "Select", xs: 4, sm:2},
+    { nom: "sallehumide", type: "Select", xs: 4, sm:2},
+    { nom: "heure", type: "Select", xs: 4, sm:3}
   ],
   suppression: [
-    { nom: "date", type: "Select"}
+    { nom: "date", type: "Select", xs: 4, sm:2}
   ]
 }
 

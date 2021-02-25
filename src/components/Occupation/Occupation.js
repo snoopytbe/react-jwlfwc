@@ -90,7 +90,6 @@ export function Occupation() {
 
   const [resultat, setResultat] = React.useState([]);
   const [modified, setModified] = React.useState(true);
-  
 
   React.useEffect(() => {
     setResultat(listeDates(data));
@@ -161,7 +160,22 @@ export function Occupation() {
         })}
 
         <Typography variant="h6">Réservations exceptionnelles</Typography>
-  
+
+        {exceptionnelFields.map((item, index) => {
+          return (
+            <PaperFieldOccupation
+              key={item.id}
+              indexField={index}
+              field="exceptionnel"
+              fieldNames={["date", "heure", "temple", "sallehumide"]}
+              control={control}
+              changeHandler={changeHandler}
+              removeHandler={regulierRemove}
+              paperStyle={classes.paper}
+              data={data}
+            />
+          );
+        })}
 
         {exceptionnelFields.map((item, index) => {
           return (

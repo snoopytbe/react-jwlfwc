@@ -7,11 +7,9 @@ import { useStyles } from "../../styles/styles";
 export const ControllerSelect = props => {
   const {
     dataName,
-    donnees,
     name,
     defaultValue,
     control,
-    label,
     required,
     onChangeHandler,
     ...other
