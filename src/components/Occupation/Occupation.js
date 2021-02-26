@@ -1,47 +1,16 @@
 import React from "react";
-import { useForm, Controller, useFieldArray, trigger } from "react-hook-form";
-import {
-  Select,
-  Grid,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-  Typography,
-  Paper
-} from "@material-ui/core";
-import { initialValues } from "../../data/initialValues";
+import { useForm, useFieldArray } from "react-hook-form";
+import { TextField, Button, Typography } from "@material-ui/core";
 import { useStyles } from "../../styles/styles";
-import DeleteIcon from "@material-ui/icons/Delete";
 import { listeDates, checkLastField } from "./occupationMethods";
 import { Calendrier } from "../Calendrier/Calendrier";
 import { PaperFieldOccupation } from "./PaperFieldOccupation";
-
-const GridContainerProp = {
-  direction: "row",
-  justify: "flex-start",
-  alignItems: "center",
-  spacing: 2
-};
-
-const useStateWithLocalStorage = localStorageKey => {
-  var storedValue = localStorage.getItem(localStorageKey);
-  storedValue = JSON.parse(storedValue);
-  if (!storedValue.hasOwnProperty("regulier")) storedValue = initialValues;
-  const [value, setValue] = React.useState(storedValue);
-
-  React.useEffect(() => {
-    localStorage.setItem(localStorageKey, JSON.stringify(value));
-  }, [value]);
-
-  return [value, setValue];
-};
+import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 
 export function Occupation() {
   const [data, setData] = useStateWithLocalStorage("data");
 
-  const { register, control, handleSubmit, getValues, setValue } = useForm({
+  const { control, handleSubmit, getValues } = useForm({
     defaultValues: data
   });
 
@@ -91,10 +60,6 @@ export function Occupation() {
     setModified(false);
   }, [modified]);
 
-  const props = () => {
-    return GridContainerProp;
-  };
-
   const onSubmit = data => {
     setData(data);
   };
@@ -109,6 +74,16 @@ export function Occupation() {
     () => <Calendrier data={resultat} />,
     [resultat]
   );
+
+  function commonProps(item, index) {
+    return {
+      key: item.id,
+      indexField: index,
+      control: control,
+      changeHandler: changeHandler,
+      data: data
+    };
+  }
 
   return (
     <div style={{ flexGrow: 1 }}>
@@ -125,21 +100,9 @@ export function Occupation() {
         {regulierFields.map((item, index) => {
           return (
             <PaperFieldOccupation
-              key={item.id}
-              indexField={index}
               field="regulier"
-              fieldNames={[
-                "numerosjours",
-                "jours",
-                "heure",
-                "temple",
-                "sallehumide"
-              ]}
-              control={control}
-              changeHandler={changeHandler}
-              removeHandler={regulierRemove}
-              paperStyle={classes.paper}
-              data={data}
+              removeHandler= {regulierRemove}
+              {...commonProps(item, index)}
             />
           );
         })}
@@ -149,83 +112,27 @@ export function Occupation() {
         {exceptionnelFields.map((item, index) => {
           return (
             <PaperFieldOccupation
-              key={item.id}
-              indexField={index}
               field="exceptionnel"
-              fieldNames={["date", "heure", "temple", "sallehumide"]}
-              control={control}
-              changeHandler={changeHandler}
-              removeHandler={regulierRemove}
-              paperStyle={classes.paper}
-              data={data}
+              removeHandler= {exceptionnelRemove}
+              {...commonProps(item, index)}
             />
           );
         })}
 
-        <Typography variant="h6">  
+        <Typography variant="h6">
           Suppression exceptionnelle de réservation
         </Typography>
 
         {suppressionFields.map((item, index) => {
           return (
-            <Paper className={classes.paper} key={item.id} elevation={3}>
-              <Grid {...props()} container>
-                <Grid item xs={4}>
-                  <Controller
-                    name={`suppression[${index}].date`}
-                    control={control}
-                    render={({ value, onChange }) => (
-                      <FormControl fullWidth className={classes.formControl}>
-                        <InputLabel
-                          shrink
-                          id={"label" + `suppression[${index}].date`}
-                          style={{ background: "#FFFFFF", padding: "0px 4px " }}
-                        >
-                          Date
-                        </InputLabel>
-                        <Select
-                          labelId={"label" + `suppression[${index}].date`}
-                          value={value}
-                          defaultValue={
-                            typeof data.suppression[index] === "undefined"
-                              ? ""
-                              : data.suppression[index].date
-                          }
-                          onChange={e => {
-                            onChange(e.target.value);
-                            changeHandler();
-                          }}
-                        >
-                          {resultat.map(item => (
-                            <MenuItem
-                              key={item.id}
-                              value={item.format("dddd DD/MM/YYYY")}
-                            >
-                              {item.format("dddd DD/MM/YYYY")}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                </Grid>
-
-                <Grid item xs={1} sm={1}>
-                  {suppressionFields.length > 1 &&
-                    index + 1 !== suppressionFields.length && (
-                      <DeleteIcon
-                        color="primary"
-                        onClick={() => {
-                          if (suppressionFields.length > 1) {
-                            suppressionRemove(index);
-                          }
-                        }}
-                        style={{ fontSize: "1.8em" }}
-                      />
-                    )}
-                </Grid>
-              </Grid>
-            </Paper>
+            <PaperFieldOccupation
+              field="suppression"
+              removeHandler= {suppressionRemove}
+              listValues={resultat.reduce((prev, act) => {
+                return [...prev, act.format("dddd DD/MM/YYYY")];
+              }, [])}
+              {...commonProps(item, index)}
+            />
           );
         })}
 

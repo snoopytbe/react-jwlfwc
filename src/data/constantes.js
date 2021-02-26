@@ -42,7 +42,7 @@ export const structureForm = {
     { nom: "sallehumide", type: "Select", xs: 6, sm: 3 },
     { nom: "heure", type: "Select", xs: 6, sm: 3 }
   ],
-  suppression: [{ nom: "date", type: "Select", xs: 4, sm: 2 }]
+  suppression: [{ nom: "date", type: "Select", xs: 4, sm: 4 }]
 };
 
 export const formData = () => {

@@ -3,7 +3,7 @@ import { Controller } from "react-hook-form";
 import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
 import { useStyles } from "../../styles/styles";
 
-export const ControllerSelect = props => {
+export default function ControllerSelect(props) {
   const {
     dataName,
     name,
@@ -55,4 +55,4 @@ export const ControllerSelect = props => {
       )}
     />
   );
-};
+}

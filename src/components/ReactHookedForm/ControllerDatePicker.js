@@ -9,7 +9,7 @@ import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 
-export const ControllerDatePicker = props => {
+export default function ControllerDatePicker(props) {
   const {
     name,
     defaultValue,
@@ -55,4 +55,4 @@ export const ControllerDatePicker = props => {
       />
     </MuiPickersUtilsProvider>
   );
-};
+}

@@ -1,9 +1,11 @@
 import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { ControllerSelect } from "./ControllerSelect";
-import { ControllerDatePicker } from "./ControllerDatePicker";
+import ControllerSelect from "../ReactHookedForm/ControllerSelect";
+import ControllerDatePicker from "../ReactHookedForm/ControllerDatePicker";
+import Delete from "../ReactHookedForm/Delete";
 import { structureForm, formData } from "../../data/constantes";
+import { useStyles } from "../../styles/styles";
 import moment from "moment";
 
 const GridContainerProp = {
@@ -44,19 +46,20 @@ export function PaperFieldOccupation(props) {
   const {
     indexField,
     field,
-    fieldNames,
     control,
     changeHandler,
     removeHandler,
-    paperStyle,
+    listValues,
     data,
     ...others
   } = props;
 
+  const classes = useStyles();
+
   return (
-    <Paper className={paperStyle} elevation={3} {...others}>
+    <Paper className={classes.paper} elevation={3} {...others}>
       <Grid {...GridContainerProp} container>
-        {structureForm[field].map((item) => {
+        {structureForm[field].map(item => {
           const controllerProperties = {
             name: `${field}[${indexField}].${item.nom}`,
             dataName: item.nom,
@@ -64,7 +67,7 @@ export function PaperFieldOccupation(props) {
             onChangeHandler: changeHandler,
             required: indexField + 1 !== data[field].length,
             label: formData()[item.nom].nom,
-            listValues: formData()[item.nom].liste ?? ""
+            listValues: listValues ?? formData()[item.nom].liste ?? ""
           };
 
           return (
@@ -77,18 +80,13 @@ export function PaperFieldOccupation(props) {
             </Grid>
           );
         })}
+
         <Grid item xs={1} sm={1}>
-          {data[field].length > 1 && indexField + 1 !== data[field].length && (
-            <DeleteIcon
-              color="primary"
-              onClick={() => {
-                if (fieldLength > 1) {
-                  removeHandler(index);
-                }
-              }}
-              style={{ fontSize: "1.8em" }}
-            />
-          )}
+          <Delete
+            maxIndex={data[field].length}
+            removeHandler={removeHandler}
+            index={indexField}
+          />
         </Grid>
       </Grid>
     </Paper>
