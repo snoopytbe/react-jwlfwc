@@ -56,7 +56,7 @@ export function PaperFieldOccupation(props) {
   const classes = useStyles();
 
   return (
-    <Paper className={classes.paper} elevation={3} {...others}>
+    <Paper className={classes.paper} elevation={3} >
       <Grid {...GridContainerProp} container>
         {structureForm[field].map(item => {
           const controllerProperties = {

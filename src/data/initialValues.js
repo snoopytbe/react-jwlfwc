@@ -1,4 +1,5 @@
 export const initialValues = {
+  loge: "La Bonne Foi",
   regulier: [
     {
       numerosjours: "1er",

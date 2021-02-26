@@ -10,7 +10,7 @@ import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 export function Occupation() {
   const [data, setData] = useStateWithLocalStorage("data");
 
-  const { control, handleSubmit, getValues } = useForm({
+  const { control, handleSubmit, register, getValues } = useForm({
     defaultValues: data
   });
 
@@ -56,7 +56,7 @@ export function Occupation() {
       exceptionnelAppend,
       suppressionAppend
     );
-    setResultat(listeDates(values));
+    setTimeout(()=>setResultat(listeDates(values),500));
     setModified(false);
   }, [modified]);
 
@@ -77,7 +77,6 @@ export function Occupation() {
 
   function commonProps(item, index) {
     return {
-      key: item.id,
       dataIndex: index,
       control: control,
       changeHandler: changeHandler
@@ -90,8 +89,9 @@ export function Occupation() {
         <TextField
           name="loge"
           required
-          defaultValue="LBF"
+          defaultValue=""
           label="Nom de la loge"
+          inputRef={register}
         />
 
         <Typography variant="h6">Réservations régulières</Typography>
@@ -99,6 +99,7 @@ export function Occupation() {
         {regulierFields.map((item, index) => {
           return (
             <PaperFieldOccupation
+              key={item.id}
               field="regulier"
               data={regulierFields}
               removeHandler={regulierRemove}
@@ -112,6 +113,7 @@ export function Occupation() {
         {exceptionnelFields.map((item, index) => {
           return (
             <PaperFieldOccupation
+              key={item.id}
               field="exceptionnel"
               data={exceptionnelFields}
               removeHandler={exceptionnelRemove}
@@ -127,6 +129,7 @@ export function Occupation() {
         {suppressionFields.map((item, index) => {
           return (
             <PaperFieldOccupation
+              key={item.id}
               field="suppression"
               data={suppressionFields}
               removeHandler={suppressionRemove}
