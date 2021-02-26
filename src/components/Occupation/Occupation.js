@@ -14,18 +14,8 @@ import {
 import { initialValues } from "../../data/initialValues";
 import { useStyles } from "../../styles/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
-import "date-fns";
-import frLocale from "date-fns/locale/fr";
-import format from "date-fns/format";
-import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
-import { ControllerSelect } from "./ControllerSelect";
 import { listeDates, checkLastField } from "./occupationMethods";
 import { Calendrier } from "../Calendrier/Calendrier";
-import moment from "moment";
 import { PaperFieldOccupation } from "./PaperFieldOccupation";
 
 const GridContainerProp = {
@@ -54,12 +44,6 @@ export function Occupation() {
   const { register, control, handleSubmit, getValues, setValue } = useForm({
     defaultValues: data
   });
-
-  class LocalizedUtils extends DateFnsUtils {
-    getDatePickerHeaderText(date) {
-      return format(date, "d MMM yyyy", { locale: this.locale });
-    }
-  }
 
   const {
     fields: regulierFields,
@@ -135,6 +119,7 @@ export function Occupation() {
           defaultValue="LBF"
           label="Nom de la loge"
         />
+
         <Typography variant="h6">Réservations régulières</Typography>
 
         {regulierFields.map((item, index) => {
@@ -177,106 +162,10 @@ export function Occupation() {
           );
         })}
 
-        {exceptionnelFields.map((item, index) => {
-          return (
-            <Paper className={classes.paper} key={item.id} elevation={3}>
-              <Grid {...props()} container>
-                <Grid item xs={6} sm={3}>
-                  <MuiPickersUtilsProvider
-                    utils={LocalizedUtils}
-                    locale={frLocale}
-                  >
-                    <Controller
-                      name={`exceptionnel[${index}].date`}
-                      control={control}
-                      defaultValue={
-                        data.exceptionnel[index]?.date
-                          ? moment(data.exceptionnel[index].date).toDate()
-                          : new Date()
-                      }
-                      rules={{ required: true }}
-                      render={innerprops => (
-                        <KeyboardDatePicker
-                          id="date-picker-dialog"
-                          label="Date"
-                          format="dd/MM/yyyy"
-                          fullWidth
-                          value={innerprops.value}
-                          onChange={date => {
-                            innerprops.onChange(date);
-                            changeHandler();
-                          }}
-                          KeyboardButtonProps={{
-                            "aria-label": "Changer la date"
-                          }}
-                          okLabel="Valider"
-                          cancelLabel="Annuler"
-                        />
-                      )}
-                    />
-                  </MuiPickersUtilsProvider>
-                </Grid>
-                <Grid item xs={6} sm={2}>
-                  <ControllerSelect
-                    name={`exceptionnel[${index}].heure`}
-                    control={control}
-                    onChangeHandler={changeHandler}
-                    defaultValue={
-                      typeof data.exceptionnel[index] === "undefined"
-                        ? ""
-                        : data.exceptionnel[index].heure
-                    }
-                    dataName="heure"
-                  />
-                </Grid>
-                <Grid item xs={5} sm={3}>
-                  <ControllerSelect
-                    name={`exceptionnel[${index}].temple`}
-                    control={control}
-                    onChangeHandler={changeHandler}
-                    defaultValue={
-                      typeof data.exceptionnel[index] === "undefined"
-                        ? ""
-                        : data.exceptionnel[index].temple
-                    }
-                    dataName="temple"
-                  />
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <ControllerSelect
-                    name={`exceptionnel[${index}].sallehumide`}
-                    control={control}
-                    onChangeHandler={changeHandler}
-                    defaultValue={
-                      typeof data.exceptionnel[index] === "undefined"
-                        ? ""
-                        : data.exceptionnel[index].sallehumide
-                    }
-                    dataName="sallehumide"
-                  />
-                </Grid>
-                <Grid item xs={1} sm={1}>
-                  {exceptionnelFields.length > 1 &&
-                    index + 1 !== exceptionnelFields.length && (
-                      <DeleteIcon
-                        color="primary"
-                        onClick={() => {
-                          if (exceptionnelFields.length > 1) {
-                            exceptionnelRemove(index);
-                          }
-                        }}
-                        style={{ fontSize: "1.8em" }}
-                      />
-                    )}
-                </Grid>
-              </Grid>
-            </Paper>
-          );
-        })}
-
-        <Typography variant="h6">
+        <Typography variant="h6">  
           Suppression exceptionnelle de réservation
         </Typography>
+
         {suppressionFields.map((item, index) => {
           return (
             <Paper className={classes.paper} key={item.id} elevation={3}>

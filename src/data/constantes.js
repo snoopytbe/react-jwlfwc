@@ -28,26 +28,24 @@ export const mois = [
   { nom: "Juillet", numero: 7 }
 ];
 
-export const structureForm =  {
+export const structureForm = {
   regulier: [
-    { nom: "numerosjours", type: "Select", xs: 4, sm:2},
-    { nom: "jours", type: "Select", xs: 4, sm:2},
-    { nom: "temple", type: "Select", xs: 4, sm:2},
-    { nom: "sallehumide", type: "Select", xs: 4, sm:2},
-    { nom: "heure", type: "Select", xs: 4, sm:3}
+    { nom: "numerosjours", type: "Select", xs: 4, sm: 2 },
+    { nom: "jours", type: "Select", xs: 4, sm: 2 },
+    { nom: "temple", type: "Select", xs: 4, sm: 2 },
+    { nom: "sallehumide", type: "Select", xs: 4, sm: 2 },
+    { nom: "heure", type: "Select", xs: 4, sm: 3 }
   ],
   exceptionnel: [
-    { nom: "date", type: "DatePicker", xs: 4, sm:2},
-    { nom: "temple", type: "Select", xs: 4, sm:2},
-    { nom: "sallehumide", type: "Select", xs: 4, sm:2},
-    { nom: "heure", type: "Select", xs: 4, sm:3}
+    { nom: "date", type: "DatePicker", xs: 6, sm: 3 },
+    { nom: "temple", type: "Select", xs: 6, sm: 2 },
+    { nom: "sallehumide", type: "Select", xs: 6, sm: 3 },
+    { nom: "heure", type: "Select", xs: 6, sm: 3 }
   ],
-  suppression: [
-    { nom: "date", type: "Select", xs: 4, sm:2}
-  ]
-}
+  suppression: [{ nom: "date", type: "Select", xs: 4, sm: 2 }]
+};
 
-export const data = () => {
+export const formData = () => {
   const horaires = [];
   for (let i = 9; i <= 23; i++)
     for (let j = 0; j < 2; j++)
@@ -57,6 +55,7 @@ export const data = () => {
   jours.map(value => nomJours.push(value.nom));
 
   return {
+    date: { nom: "Date" },
     jours: {
       nom: "Jour",
       liste: nomJours
