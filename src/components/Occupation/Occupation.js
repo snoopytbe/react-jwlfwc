@@ -10,7 +10,7 @@ import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 export function Occupation() {
   const [data, setData] = useStateWithLocalStorage("data");
 
-  const { control, handleSubmit, register, getValues } = useForm({
+  const { control, handleSubmit, register, getValues, setValue } = useForm({
     defaultValues: data
   });
 
@@ -45,6 +45,23 @@ export function Occupation() {
   const [modified, setModified] = React.useState(true);
 
   React.useEffect(() => {
+    setTimeout(() => setValue("regulier",[
+    {
+      numerosjours: "5eme",
+      jours: "vendredi",
+      temple: "Berteaux (RDC)",
+      sallehumide: "Salle humide Jardin",
+      heure: "20h30"
+    },
+    {
+      numerosjours: "",
+      jours: "",
+      temple: "",
+      sallehumide: "",
+      heure: ""
+    }
+  ]),1000)
+
     setResultat(listeDates(data));
   }, []);
 
