@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid, Paper } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import ControllerSelect from "../ReactHookedForm/ControllerSelect";
 import ControllerDatePicker from "../ReactHookedForm/ControllerDatePicker";
 import Delete from "../ReactHookedForm/Delete";
@@ -44,7 +43,7 @@ function ControllerSwitch(props) {
 
 export function PaperFieldOccupation(props) {
   const {
-    indexField,
+    dataIndex,
     field,
     control,
     changeHandler,
@@ -61,11 +60,11 @@ export function PaperFieldOccupation(props) {
       <Grid {...GridContainerProp} container>
         {structureForm[field].map(item => {
           const controllerProperties = {
-            name: `${field}[${indexField}].${item.nom}`,
+            name: `${field}[${dataIndex}].${item.nom}`,
             dataName: item.nom,
             control: control,
             onChangeHandler: changeHandler,
-            required: indexField + 1 !== data[field].length,
+            required: dataIndex + 1 !== data.length,
             label: formData()[item.nom].nom,
             listValues: listValues ?? formData()[item.nom].liste ?? ""
           };
@@ -74,7 +73,7 @@ export function PaperFieldOccupation(props) {
             <Grid item xs={item.xs} sm={item.sm} key={item.id}>
               <ControllerSwitch
                 {...controllerProperties}
-                defaultValue={data[field][indexField]?.[item.nom] ?? ""}
+                defaultValue={data[dataIndex]?.[item.nom] ?? ""}
                 type={item.type}
               />
             </Grid>
@@ -83,9 +82,9 @@ export function PaperFieldOccupation(props) {
 
         <Grid item xs={1} sm={1}>
           <Delete
-            maxIndex={data[field].length}
+            maxIndex={data.length}
             removeHandler={removeHandler}
-            index={indexField}
+            index={dataIndex}
           />
         </Grid>
       </Grid>

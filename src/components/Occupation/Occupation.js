@@ -78,10 +78,9 @@ export function Occupation() {
   function commonProps(item, index) {
     return {
       key: item.id,
-      indexField: index,
+      dataIndex: index,
       control: control,
-      changeHandler: changeHandler,
-      data: data
+      changeHandler: changeHandler
     };
   }
 
@@ -101,7 +100,8 @@ export function Occupation() {
           return (
             <PaperFieldOccupation
               field="regulier"
-              removeHandler= {regulierRemove}
+              data={regulierFields}
+              removeHandler={regulierRemove}
               {...commonProps(item, index)}
             />
           );
@@ -113,7 +113,8 @@ export function Occupation() {
           return (
             <PaperFieldOccupation
               field="exceptionnel"
-              removeHandler= {exceptionnelRemove}
+              data={exceptionnelFields}
+              removeHandler={exceptionnelRemove}
               {...commonProps(item, index)}
             />
           );
@@ -127,7 +128,8 @@ export function Occupation() {
           return (
             <PaperFieldOccupation
               field="suppression"
-              removeHandler= {suppressionRemove}
+              data={suppressionFields}
+              removeHandler={suppressionRemove}
               listValues={resultat.reduce((prev, act) => {
                 return [...prev, act.format("dddd DD/MM/YYYY")];
               }, [])}

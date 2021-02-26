@@ -6,7 +6,7 @@ export default function Delete(props) {
 
   return (
     <div>
-      {maxIndex > 1 && index + 1 !== maxIndex && (
+      {maxIndex > 1 && index + 1 < maxIndex && (
         <DeleteIcon
           color="primary"
           onClick={() => {
