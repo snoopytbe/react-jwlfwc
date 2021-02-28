@@ -6,9 +6,10 @@ import { listeDates, checkLastField } from "./occupationMethods";
 import { Calendrier } from "../Calendrier/Calendrier";
 import { PaperFieldOccupation } from "./PaperFieldOccupation";
 import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
+import { initialValues } from "../../data/initialValues";
 
-export function Occupation() {
-  const [data, setData] = useStateWithLocalStorage("data");
+export default function Occupation() {
+  const [data, setData] = useStateWithLocalStorage("data", initialValues);
 
   const { control, handleSubmit, register, getValues, setValue } = useForm({
     defaultValues: data
@@ -42,30 +43,37 @@ export function Occupation() {
   });
 
   const [resultat, setResultat] = React.useState([]);
-  const [modified, setModified] = React.useState(true);
 
   React.useEffect(() => {
-    setTimeout(() => setValue("regulier",[
-    {
-      numerosjours: "5eme",
-      jours: "vendredi",
-      temple: "Berteaux (RDC)",
-      sallehumide: "Salle humide Jardin",
-      heure: "20h30"
-    },
-    {
-      numerosjours: "",
-      jours: "",
-      temple: "",
-      sallehumide: "",
-      heure: ""
-    }
-  ]),1000)
+    /*setTimeout(
+      () =>
+        setValue("regulier", [
+          {
+            numerosjours: "5eme",
+            jours: "vendredi",
+            temple: "Berteaux (RDC)",
+            sallehumide: "Salle humide Jardin",
+            heure: "20h30"
+          },
+          {
+            numerosjours: "",
+            jours: "",
+            temple: "",
+            sallehumide: "",
+            heure: ""
+          }
+        ]),
+      1000
+    );*/
 
     setResultat(listeDates(data));
   }, []);
 
-  React.useEffect(() => {
+  const onSubmit = data => {
+    setData(data);
+  };
+
+  const changeHandler = () => {
     let values = getValues();
     checkLastField(
       values,
@@ -73,16 +81,7 @@ export function Occupation() {
       exceptionnelAppend,
       suppressionAppend
     );
-    setTimeout(()=>setResultat(listeDates(values),500));
-    setModified(false);
-  }, [modified]);
-
-  const onSubmit = data => {
-    setData(data);
-  };
-
-  const changeHandler = () => {
-    setModified(true);
+    setTimeout(() => setResultat(listeDates(values), 500));
   };
 
   const classes = useStyles();

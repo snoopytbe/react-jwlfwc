@@ -1,8 +1,10 @@
+Tableau de synthèse des loges
 Saisie de plusieurs loges
 Vérification des champs saisis : pas de date en doublon, pas d'ajout ou suppression invalide
 Export PDF
 Sauvegarde sur un serveur / SQL ?
 KeyboardTimePicker pour le choix de l'heure
+Modifier un temple ou une salle humide pour une date
 Affichage du calendrier à la demande
 refactoring
 Interdire le dimanche en format récurrent

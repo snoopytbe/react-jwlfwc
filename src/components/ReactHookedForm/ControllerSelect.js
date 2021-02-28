@@ -45,6 +45,9 @@ export default function ControllerSelect(props) {
               onChangeHandler();
             }}
           >
+            {defaultValue !== "" && !listValues.includes(defaultValue) && (
+              <MenuItem value={defaultValue}>{defaultValue}</MenuItem>
+            )}
             {listValues.map(item => (
               <MenuItem key={item.id} value={item}>
                 {item}

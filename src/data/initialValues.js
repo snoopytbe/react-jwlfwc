@@ -32,7 +32,7 @@ export const initialValues = {
   ],
   exceptionnel: [
     {
-      date: "23/02/2021",
+      date: "2021-02-23T00:00:00.000Z",
       temple: "Berteaux (RDC)",
       sallehumide: "Salle humide Jardin",
       heure: "20h30"

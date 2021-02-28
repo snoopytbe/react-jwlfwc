@@ -56,13 +56,14 @@ export const listeDates = data => {
     data.suppression.map((suppression, index) => {
       if (index <= lastIndex) {
         let dateSansJour = suppression.date.slice(
-          suppression.date.indexOf(" ")
+          suppression.date.indexOf(" ") + 1
         );
         let maDate = moment(dateSansJour, "DD/MM/YYYY").locale("fr-FR");
         if (maDate.isValid()) {
-          let pos = resultSansDoublon.indexOf(maDate);
-          resultWithDelete =
-            pos >= 0 ? resultSansDoublon.splice(pos, 1) : resultSansDoublon;
+          let pos = resultWithDelete.reduce((prev, act, index) => {
+            return maDate.diff(act, "days") === 0 ? index : prev;
+          }, -1);
+          pos >= 0 && resultWithDelete.splice(pos, 1);
         }
       }
     });
