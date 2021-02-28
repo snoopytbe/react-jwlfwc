@@ -42,8 +42,8 @@ const data = React.useMemo(
   []
 );
 
-export default function TableauSynthese(props) {
-  const { getTableProps, headerGroups, rows, prepareRow } = useTable({
+export function TableauSynthese() {
+  const tableInstance = useTable({
     columns,
     data
   });
