@@ -8,13 +8,12 @@ export const useStyles = makeStyles(theme => ({
     minWidth: "400px"
   },
   formControl: {
-    margin: theme.spacing(1),
-
+    margin: theme.spacing(1)
   },
   paper: {
     margin: theme.spacing(3) + "px 0px",
     padding: "10px",
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.secondary
   }
 }));
 

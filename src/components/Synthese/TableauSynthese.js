@@ -6,47 +6,118 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "../../styles/styleTableCell";
 import Paper from "@material-ui/core/Paper";
-import { useTable } from "react-table";
+import Select from "../../styles/styleSelect"
+import { Select, MenuItem } from "@material-ui/core";
+import { useTable, useFilters, useGlobalFilter } from "react-table";
 
-const columns = React.useMemo(
-  () => [
-    {
-      Header: "Acronyme",
-      accessor: "acr"
-    },
-    {
-      Header: "Loge",
-      accessor: "loge"
-    },
-    {
-      Header: "Programme",
-      accessor: "prog"
-    }
-  ],
-  []
-);
+export default function TableauSynthese(props) {
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Acronyme",
+        accessor: "acr",
+        Filter: SelectColumnFilter,
+        filter: "includes"
+      },
+      {
+        Header: "Loge",
+        accessor: "loge",
+        Filter: SelectColumnFilter,
+        filter: "includes"
+      },
+      {
+        Header: "Programme",
+        accessor: "prog",
+        Filter: SelectColumnFilter,
+        filter: "includes"
+      }
+    ],
+    []
+  );
 
-const data = React.useMemo(
-  () => [
-    {
-      acr: "LBF",
-      loge: "La Bonne Foi",
-      prog: "1er mardi, bla bla"
-    },
-    {
-      acr: "LCE",
-      loge: "Le Chardon Ecossais",
-      prog: "1er mercredi"
-    }
-  ],
-  []
-);
+  const data = React.useMemo(
+    () => [
+      {
+        acr: "LBF",
+        loge: "La Bonne Foi",
+        prog: "1er mardi, bla bla"
+      },
+      {
+        acr: "LCE",
+        loge: "Le Chardon Ecossais",
+        prog: "1er mercredi"
+      }
+    ],
+    []
+  );
 
-export function TableauSynthese() {
-  const tableInstance = useTable({
-    columns,
-    data
-  });
+  function DefaultColumnFilter({
+    column: { filterValue, preFilteredRows, setFilter }
+  }) {
+    const count = preFilteredRows.length;
+
+    return (
+      <Input
+        value={filterValue || ""}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      />
+    );
+  }
+
+  function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id }
+  }) {
+    const options = React.useMemo(() => {
+      const options = new Set();
+      preFilteredRows.forEach(row => {
+        options.add(row.values[id]);
+      });
+      return [...options.values()];
+    }, [id, preFilteredRows]);
+
+    return (
+      <Select
+        value={filterValue}
+        color="#fff"
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <MenuItem color="#fff" value="">All</MenuItem>
+        {options.map((option, i) => (
+          <MenuItem key={i} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  }
+
+  const filterTypes = React.useMemo(
+    () => ({
+      text: (rows, id, filterValue) => {
+        return rows.filter(row => {
+          const rowValue = row.values[id];
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true;
+        });
+      }
+    }),
+    []
+  );
+
+  const defaultColumn = React.useMemo(
+    () => ({
+      // Let's set up our default Filter UI
+      Filter: DefaultColumnFilter
+    }),
+    []
+  );
 
   const {
     getTableProps,
@@ -54,7 +125,16 @@ export function TableauSynthese() {
     headerGroups,
     rows,
     prepareRow
-  } = tableInstance;
+  } = useTable(
+    {
+      columns,
+      data,
+      defaultColumn, // Be sure to pass the defaultColumn option
+      filterTypes
+    },
+    useFilters, // useFilters!
+    useGlobalFilter // useGlobalFilter!
+  );
 
   return (
     <TableContainer component={Paper}>
@@ -63,8 +143,9 @@ export function TableauSynthese() {
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <TableCell className="jour" {...column.getHeaderProps()}>
+                <TableCell className="header" {...column.getHeaderProps()}>
                   {column.render("Header")}
+                  <div>{column.canFilter ? column.render("Filter") : null}</div>
                 </TableCell>
               ))}
             </TableRow>
@@ -77,7 +158,7 @@ export function TableauSynthese() {
               <TableRow {...row.getRowProps()}>
                 {row.cells.map(cell => {
                   return (
-                    <TableCell className="jour" {...cell.getCellProps()}>
+                    <TableCell className="row" {...cell.getCellProps()}>
                       {cell.render("Cell")}
                     </TableCell>
                   );

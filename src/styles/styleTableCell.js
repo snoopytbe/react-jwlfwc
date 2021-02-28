@@ -8,15 +8,24 @@ const couleurDimanche = "#aad5f4";
 const couleurNumeroJour = "D1C7CF";
 const couleurJourFerie = "#33cc66";
 const couleurVacances = "#e60000";
+const couleurBord = "#3F3F6E";
 const white = "#ffffff";
 const black = "#000000";
 
-export const StyleTableCell = (theme) => ({
+export const StyleTableCell = theme => ({
   root: {
     textAlign: "center",
     border: `1px solid ${white}`,
     padding: "5px",
     color: couleurPolice,
+
+    "&.header": { backgroundColor: couleurAnnee },
+
+    "&.row": {
+      backgroundColor: couleurNumeroJour,
+      color: black,
+      border: `1px solid ${couleurBord}`
+    },
 
     "&.annee": {
       backgroundColor: couleurAnnee,

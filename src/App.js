@@ -15,7 +15,7 @@ export default function App() {
 
         <br />
 
-        <Occupation />
+        <TableauSynthese />
         <br />
       </div>
     </ThemeProvider>
