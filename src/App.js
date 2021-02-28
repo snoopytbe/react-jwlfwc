@@ -4,6 +4,7 @@ import { Typography } from "@material-ui/core";
 import { theme, useStyles } from "./styles/styles";
 import Calendrier from "./components/Calendrier/Calendrier";
 import Occupation from "./components/Occupation/Occupation";
+import TableauSynthese from "./components/Synthese/TableauSynthese"
 
 export default function App() {
   const classes = useStyles();
@@ -14,7 +15,7 @@ export default function App() {
 
         <br />
 
-        <Occupation />
+        <TableauSynthese />
         <br />
       </div>
     </ThemeProvider>
