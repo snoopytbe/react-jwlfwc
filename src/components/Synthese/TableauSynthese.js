@@ -1,13 +1,17 @@
 import React from "react";
 import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "../../styles/styleTableCell";
-import Paper from "@material-ui/core/Paper";
-import Select from "../../styles/styleSelect"
-import { Select, MenuItem } from "@material-ui/core";
+import Select from "../../styles/styleSelect";
+import {
+  Select,
+  MenuItem,
+  TableHead,
+  TableBody,
+  TableContainer,
+  TableRow,
+  TableCell,
+  FormControl,
+  Paper
+} from "@material-ui/core";
 import { useTable, useFilters, useGlobalFilter } from "react-table";
 
 export default function TableauSynthese(props) {
@@ -30,6 +34,13 @@ export default function TableauSynthese(props) {
         accessor: "prog",
         Filter: SelectColumnFilter,
         filter: "includes"
+      },
+      {
+        Header: "",
+        accessor: "edit",
+        Filter: SelectColumnFilter,
+        disableFilters:true,
+        filter: "includes"
       }
     ],
     []
@@ -40,12 +51,14 @@ export default function TableauSynthese(props) {
       {
         acr: "LBF",
         loge: "La Bonne Foi",
-        prog: "1er mardi, bla bla"
+        prog: "1er mardi",
+        edit: "edit"
       },
       {
         acr: "LCE",
         loge: "Le Chardon Ecossais",
-        prog: "1er mercredi"
+        prog: "1er mercredi",
+        edit: "edit"
       }
     ],
     []
@@ -78,20 +91,21 @@ export default function TableauSynthese(props) {
     }, [id, preFilteredRows]);
 
     return (
-      <Select
-        value={filterValue}
-        color="#fff"
-        onChange={e => {
-          setFilter(e.target.value || undefined);
-        }}
-      >
-        <MenuItem color="#fff" value="">All</MenuItem>
-        {options.map((option, i) => (
-          <MenuItem key={i} value={option}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
+      <FormControl fullWidth>
+        <Select
+          value={filterValue}
+          onChange={e => {
+            setFilter(e.target.value || undefined);
+          }}
+        >
+          <MenuItem value="">Tous</MenuItem>
+          {options.map((option, i) => (
+            <MenuItem key={i} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     );
   }
 
