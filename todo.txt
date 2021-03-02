@@ -6,6 +6,7 @@ Sauvegarde sur un serveur / SQL ?
 KeyboardTimePicker pour le choix de l'heure
 Modifier un temple ou une salle humide pour une date
 Affichage du calendrier à la demande
+Tableau en français
 refactoring
 Interdire le dimanche en format récurrent
 Ajout des autres informations de la loge

@@ -1,4 +1,5 @@
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
+import { frFR } from "@material-ui/core/locale";
 
 export const useStyles = makeStyles(theme => ({
   root: {
@@ -18,6 +19,7 @@ export const useStyles = makeStyles(theme => ({
 }));
 
 export const theme = createMuiTheme({
+  frFR,
   palette: {
     common: {
       black: "#000",
