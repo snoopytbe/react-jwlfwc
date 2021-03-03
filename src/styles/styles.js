@@ -1,5 +1,6 @@
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
-import { frFR } from "@material-ui/core/locale";
+//import { frFR } from "@material-ui/core/locale";
+import { frFR } from "@material-ui/data-grid";
 
 export const useStyles = makeStyles(theme => ({
   root: {

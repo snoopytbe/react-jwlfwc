@@ -1,5 +1,3 @@
-import React from "react";
-
 export const annee = 2020;
 
 export const zone = "A";

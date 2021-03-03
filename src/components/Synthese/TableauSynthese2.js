@@ -1,55 +1,58 @@
 import React from "react";
-import { DataGrid, GridToolbar } from "@material-ui/data-grid";
-import { ThemeProvider } from "@material-ui/core/styles";
-import { theme } from "../../styles/styles";
+import { DataGrid, GridToolbar, frFR } from "@material-ui/data-grid";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 import { initialValues } from "../../data/initialValues";
+import { texteReservations } from "../Occupation/occupationMethods";
+
+const theme = createMuiTheme(
+
+  frFR
+);
 
 const columns = [
   {
     headerName: "Acronyme",
     field: "acr",
-    width: 150
+    width: 120
   },
   {
     headerName: "Loge",
     field: "loge",
-    width: 150
+    flex: 2
   },
   {
     headerName: "Programme",
     field: "prog",
-    width: 150
+    flex: 5
   }
 ];
 
-const rows = [
-  {
-    id: 1,
-    acr: "LBF",
-    loge: "La Bonne Foi",
-    prog: "1er mardi"
-  },
-  {
-    id: 2,
-    acr: "LCE",
-    loge: "Le Chardon Ecossais",
-    prog: "1er mercredi"
-  }
-];
+const rows = [];
+initialValues.map((item, index) => {
+  let newRow = {};
+  newRow.id = index;
+  newRow.acr = item.acronyme;
+  newRow.loge = item.loge;
+  newRow.prog = texteReservations(item);
+  rows.push(newRow);
+});
 
 export default function TableauSynthese() {
-  const [data, setData] = useStateWithLocalStorage("data", initialValues);
+  //const [data, setData] = useStateWithLocalStorage("data", initialValues);
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 1000, width: "100%" }}>
         <DataGrid
+          autoHeight
           rows={rows}
           columns={columns}
           components={{
             Toolbar: GridToolbar
           }}
+          disableDensitySelector
+          disableColumnSelector
         />
       </div>
     </ThemeProvider>

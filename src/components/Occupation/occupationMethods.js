@@ -1,4 +1,4 @@
-import { jours, mois, annee } from "../../data/constantes";
+import { jours, mois, annee, formData } from "../../data/constantes";
 import moment from "moment";
 import "moment/min/locales.min";
 import { nthDay } from "../Calendrier/vacances";
@@ -77,20 +77,54 @@ export const listeDates = data => {
 export const texteReservations = data => {
   var result = "";
 
+  function donneIndex(jour, temple, salle, horaire) {
+    return jour + " (" + horaire + ", " + temple + ", " + salle + ")";
+  }
+
+  function donneIndexItem(item) {
+    return donneIndex(item.jours, item.temple, item.sallehumide, item.heure);
+  }
+
   if (data.hasOwnProperty("regulier")) {
+    var reservationIndexee = {};
+    var listeJours = formData().jours.liste;
+    var listeTemples = formData().temple.liste;
+    var listeHoraires = formData().heure.liste;
+    var listeSalles = formData().sallehumide.liste;
+
+    listeJours.map(lj =>
+      listeTemples.map(lt =>
+        listeSalles.map(ls =>
+          listeHoraires.map(
+            lh => (reservationIndexee[donneIndex(lj, lt, ls, lh)] = "")
+          )
+        )
+      )
+    );
+
     var lastIndex = data.regulier.length - 1;
-    var jour = {};
     if (isEmptyLastField(data, "regulier")) lastIndex -= 1;
-    data.regulier.map((reservation, index) => {
-      let prev = jour[reservation.jours];
-      jour[reservation.jours] =
-        (prev && prev + ", ") + jour[reservation.numerosjours];
+    data.regulier.map((item, index) => {
+      if (index <= lastIndex) {
+        let before = "";
+        if (reservationIndexee[donneIndexItem(item)] !== "") {
+          before =
+            reservationIndexee[donneIndexItem(item)].replace(" et", ",") +
+            " et ";
+        }
+        reservationIndexee[donneIndexItem(item)] = before + item.numerosjours;
+      }
     });
-    Object.keys(jour).forEach(key => {
-      prev = result;
-      result = (prev !== "" && " ,") + jour[key] + " " + key;
+
+    Object.keys(reservationIndexee).forEach(key => {
+      if (reservationIndexee[key] != "") {
+        let before = "";
+        if (result !== "") before = result + ", ";
+        result = before + reservationIndexee[key] + " " + key;
+      }
     });
   }
+  console.log(result);
   return result;
 };
 
