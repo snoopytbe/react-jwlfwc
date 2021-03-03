@@ -74,6 +74,26 @@ export const listeDates = data => {
   return resultTrie;
 };
 
+export const texteReservations = data => {
+  var result = "";
+
+  if (data.hasOwnProperty("regulier")) {
+    var lastIndex = data.regulier.length - 1;
+    var jour = {};
+    if (isEmptyLastField(data, "regulier")) lastIndex -= 1;
+    data.regulier.map((reservation, index) => {
+      let prev = jour[reservation.jours];
+      jour[reservation.jours] =
+        (prev && prev + ", ") + jour[reservation.numerosjours];
+    });
+    Object.keys(jour).forEach(key => {
+      prev = result;
+      result = (prev !== "" && " ,") + jour[key] + " " + key;
+    });
+  }
+  return result;
+};
+
 function isEmptyLastField(data, fieldName, exception) {
   var result = false;
   const fields = data[fieldName];
