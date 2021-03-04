@@ -1,11 +1,11 @@
 import React from "react";
-//import { ThemeProvider } from "@material-ui/core/styles";
-//import { Typography } from "@material-ui/core";
-//import { theme, useStyles } from "./styles/styles";
-//import Calendrier from "./components/Calendrier/Calendrier";
+import { ThemeProvider } from "@material-ui/core/styles";
+import { Typography } from "@material-ui/core";
+import { theme, useStyles } from "./styles/styles";
+import Calendrier from "./components/Calendrier/Calendrier";
 import Occupation from "./components/Occupation/Occupation";
 import TableauSynthese from "./components/Synthese/TableauSynthese";
-//import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import { useRoutes } from "hookrouter";
 
 const routes = {
@@ -16,7 +16,7 @@ const routes = {
 export default function App() {
   //const classes = useStyles();
   const routeResult = useRoutes(routes);
-  /*return (
+  return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <div className={classes.root}>
@@ -38,6 +38,6 @@ export default function App() {
       
     </ThemeProvider>
 
-  );*/
-  return (routeResult || <NotFoundPage />)
+  );
+  return routeResult;
 }
