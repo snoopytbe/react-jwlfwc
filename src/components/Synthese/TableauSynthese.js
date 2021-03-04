@@ -1,187 +1,70 @@
 import React from "react";
-import Table from "@material-ui/core/Table";
-import Select from "../../styles/styleSelect";
-import {
-  Select,
-  MenuItem,
-  TableHead,
-  TableBody,
-  TableContainer,
-  TableRow,
-  TableCell,
-  FormControl,
-  Paper
-} from "@material-ui/core";
-import { useTable, useFilters, useGlobalFilter } from "react-table";
+import Button from "@material-ui/core/Button";
+import { DataGrid, GridToolbar, frFR } from "@material-ui/data-grid";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
+import { initialValues } from "../../data/initialValues";
+import { texteReservations } from "../Occupation/occupationMethods";
+import { Occupation } from "../Occupation/Occupation";
 
-export default function TableauSynthese(props) {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Acronyme",
-        accessor: "acr",
-        Filter: SelectColumnFilter,
-        filter: "includes"
-      },
-      {
-        Header: "Loge",
-        accessor: "loge",
-        Filter: SelectColumnFilter,
-        filter: "includes"
-      },
-      {
-        Header: "Programme",
-        accessor: "prog",
-        Filter: SelectColumnFilter,
-        filter: "includes"
-      },
-      {
-        Header: "",
-        accessor: "edit",
-        Filter: SelectColumnFilter,
-        disableFilters:true,
-        filter: "includes"
-      }
-    ],
-    []
-  );
+const theme = createMuiTheme(frFR);
 
-  const data = React.useMemo(
-    () => [
-      {
-        acr: "LBF",
-        loge: "La Bonne Foi",
-        prog: "1er mardi",
-        edit: "edit"
-      },
-      {
-        acr: "LCE",
-        loge: "Le Chardon Ecossais",
-        prog: "1er mercredi",
-        edit: "edit"
-      }
-    ],
-    []
-  );
+export default function TableauSynthese() {
+  //const [data, setData] = useStateWithLocalStorage("data", initialValues);
 
-  function DefaultColumnFilter({
-    column: { filterValue, preFilteredRows, setFilter }
-  }) {
-    const count = preFilteredRows.length;
-
-    return (
-      <Input
-        value={filterValue || ""}
-        onChange={e => {
-          setFilter(e.target.value || undefined);
-        }}
-      />
-    );
-  }
-
-  function SelectColumnFilter({
-    column: { filterValue, setFilter, preFilteredRows, id }
-  }) {
-    const options = React.useMemo(() => {
-      const options = new Set();
-      preFilteredRows.forEach(row => {
-        options.add(row.values[id]);
-      });
-      return [...options.values()];
-    }, [id, preFilteredRows]);
-
-    return (
-      <FormControl fullWidth>
-        <Select
-          value={filterValue}
-          onChange={e => {
-            setFilter(e.target.value || undefined);
-          }}
-        >
-          <MenuItem value="">Tous</MenuItem>
-          {options.map((option, i) => (
-            <MenuItem key={i} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  }
-
-  const filterTypes = React.useMemo(
-    () => ({
-      text: (rows, id, filterValue) => {
-        return rows.filter(row => {
-          const rowValue = row.values[id];
-          return rowValue !== undefined
-            ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
-            : true;
-        });
-      }
-    }),
-    []
-  );
-
-  const defaultColumn = React.useMemo(
-    () => ({
-      // Let's set up our default Filter UI
-      Filter: DefaultColumnFilter
-    }),
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow
-  } = useTable(
+  const columns = [
     {
-      columns,
-      data,
-      defaultColumn, // Be sure to pass the defaultColumn option
-      filterTypes
+      headerName: "Acronyme",
+      field: "acr",
+      width: 120
     },
-    useFilters, // useFilters!
-    useGlobalFilter // useGlobalFilter!
-  );
+    {
+      headerName: "Loge",
+      field: "loge",
+      flex: 2
+    },
+    {
+      headerName: "Programme",
+      field: "prog",
+      flex: 5
+    },
+    {
+      headerName: " ",
+      field: "edit",
+      flex: 1,
+      renderCell: params => (
+        <Button variant="contained" color="primary" size="small">
+          Ouvrir
+        </Button>
+      )
+    }
+  ];
+
+  const rows = [];
+  initialValues.map((item, index) => {
+    let newRow = {};
+    newRow.id = index;
+    newRow.acr = item.acronyme;
+    newRow.loge = item.loge;
+    newRow.prog = texteReservations(item);
+    newRow.edit = index;
+    rows.push(newRow);
+  });
 
   return (
-    <TableContainer component={Paper}>
-      <Table {...getTableProps()}>
-        <TableHead>
-          {headerGroups.map(headerGroup => (
-            <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <TableCell className="header" {...column.getHeaderProps()}>
-                  {column.render("Header")}
-                  <div>{column.canFilter ? column.render("Filter") : null}</div>
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableHead>
-        <TableBody {...getTableBodyProps()}>
-          {rows.map(row => {
-            prepareRow(row);
-            return (
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return (
-                    <TableCell className="row" {...cell.getCellProps()}>
-                      {cell.render("Cell")}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <ThemeProvider theme={theme}>
+      <div style={{ height: 1000, width: "100%" }}>
+        <DataGrid
+          autoHeight
+          rows={rows}
+          columns={columns}
+          components={{
+            Toolbar: GridToolbar
+          }}
+          disableDensitySelector
+          disableColumnSelector
+        />
+      </div>
+    </ThemeProvider>
   );
 }
