@@ -6,11 +6,14 @@ import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 import { initialValues } from "../../data/initialValues";
 import { texteReservations } from "../Occupation/occupationMethods";
 import { Occupation } from "../Occupation/Occupation";
+import { useHistory } from "react-router-dom";
 
 const theme = createMuiTheme(frFR);
 
-export default function TableauSynthese() {
+export default function TableauSynthese(props) {
   //const [data, setData] = useStateWithLocalStorage("data", initialValues);
+  var history = useHistory();
+  const { data } = props;
 
   const columns = [
     {
@@ -33,7 +36,12 @@ export default function TableauSynthese() {
       field: "edit",
       flex: 1,
       renderCell: params => (
-        <Button variant="contained" color="primary" size="small">
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={() => history.push("/Occupation/" + params.value)}
+        >
           Ouvrir
         </Button>
       )
@@ -41,7 +49,7 @@ export default function TableauSynthese() {
   ];
 
   const rows = [];
-  initialValues.map((item, index) => {
+  data.map((item, index) => {
     let newRow = {};
     newRow.id = index;
     newRow.acr = item.acronyme;

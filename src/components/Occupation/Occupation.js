@@ -8,12 +8,11 @@ import { PaperFieldOccupation } from "./PaperFieldOccupation";
 import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 import { initialValues } from "../../data/initialValues";
 
-export default function Occupation(params) {
-//const { data, setData } = props;
-  const [data, setData] = useStateWithLocalStorage("data", initialValues);
+export default function Occupation(props) {
+  const { data, setData, id } = props;
 
   const { control, handleSubmit, register, getValues, setValue } = useForm({
-    defaultValues: data
+    defaultValues: data[id]
   });
 
   const {

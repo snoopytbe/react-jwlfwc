@@ -124,7 +124,6 @@ export const texteReservations = data => {
       }
     });
   }
-  console.log(result);
   return result;
 };
 
