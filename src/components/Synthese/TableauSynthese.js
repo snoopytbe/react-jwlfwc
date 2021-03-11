@@ -7,6 +7,7 @@ import { initialValues } from "../../data/initialValues";
 import { texteReservations } from "../Occupation/occupationMethods";
 import { Occupation } from "../Occupation/Occupation";
 import { useHistory } from "react-router-dom";
+import { Typography } from "@material-ui/core";
 
 const theme = createMuiTheme(frFR);
 
@@ -60,19 +61,23 @@ export default function TableauSynthese(props) {
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <div style={{ height: 1000, width: "100%" }}>
-        <DataGrid
-          autoHeight
-          rows={rows}
-          columns={columns}
-          components={{
-            Toolbar: GridToolbar
-          }}
-          disableDensitySelector
-          disableColumnSelector
-        />
-      </div>
-    </ThemeProvider>
+    <>
+      <Typography variant="h4">Tableau des loges</Typography>
+      <br />
+      <ThemeProvider theme={theme}>
+        <div style={{ height: 1000, width: "100%" }}>
+          <DataGrid
+            autoHeight
+            rows={rows}
+            columns={columns}
+            components={{
+              Toolbar: GridToolbar
+            }}
+            disableDensitySelector
+            disableColumnSelector
+          />
+        </div>
+      </ThemeProvider>
+    </>
   );
 }

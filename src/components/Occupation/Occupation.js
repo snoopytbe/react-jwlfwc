@@ -7,6 +7,7 @@ import { Calendrier } from "../Calendrier/Calendrier";
 import { PaperFieldOccupation } from "./PaperFieldOccupation";
 import { useStateWithLocalStorage } from "../../utils/useStateWithLocalStorage";
 import { initialValues } from "../../data/initialValues";
+import { useHistory } from "react-router-dom";
 
 export default function Occupation(props) {
   const { data, setData, id } = props;
@@ -91,6 +92,8 @@ export default function Occupation(props) {
     [resultat]
   );
 
+  var history = useHistory();
+
   function commonProps(item, index) {
     return {
       dataIndex: index,
@@ -101,6 +104,17 @@ export default function Occupation(props) {
 
   return (
     <div style={{ flexGrow: 1 }}>
+      <Typography variant="h4">Réservation</Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        onClick={() => history.push("/TableauSynthese/")}
+      >
+        Retour au tableau de synthèse
+      </Button>
+      <br />
+      <br />
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           name="loge"

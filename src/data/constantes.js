@@ -60,11 +60,11 @@ export const formData = () => {
     },
     numerosjours: {
       nom: "Semaine",
-      liste: ["1er", "2eme", "3eme", "4eme", "5eme"]
+      liste: ["1er", "2ème", "3ème", "4ème", "5ème"]
     },
     temple: {
       nom: "Temple",
-      liste: ["Berteaux (RDC)", "Ramsay (ETG)", "Aucun temple"]
+      liste: ["Berteaux (ETG)", "Ramsay (RDC)", "Aucun temple"]
     },
     sallehumide: {
       nom: "Salle humide",

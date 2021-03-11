@@ -6,10 +6,10 @@ import Calendrier from "./components/Calendrier/Calendrier";
 import Occupation from "./components/Occupation/Occupation";
 import TableauSynthese from "./components/Synthese/TableauSynthese";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
-import { initialValues } from "./data/initialValues";
+import { initialValuesComplete } from "./data/initialValues";
 
 export default function App() {
-  const [data, setData] = React.useState(initialValues);
+  const [data, setData] = React.useState(initialValuesComplete);
 
   return (
     <ThemeProvider theme={theme}>
